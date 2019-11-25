@@ -1,0 +1,2 @@
+CLASSPATH=.:/local/apache-river-3.0.0/lib/jsk-lib.jar:/local/apache-river-3.0.0/lib/jsk-platform.jar:/local/apache-river-3.0.0/lib/outrigger.jar:/local/apache-river-3.0.0/lib/reggie.jar:/local/apache-river-3.0.0/lib-dl/outrigger-dl.jar:
+
