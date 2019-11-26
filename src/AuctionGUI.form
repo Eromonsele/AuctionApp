@@ -17,7 +17,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <visible value="false"/>
+          <visible value="true"/>
         </properties>
         <border type="none"/>
         <children>
@@ -123,7 +123,7 @@
               </hspacer>
             </children>
           </grid>
-          <grid id="deb38" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="deb38" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -132,7 +132,7 @@
             <border type="none"/>
             <children>
               <component id="1f1db" class="javax.swing.JLabel">
-                <constraints border-constraint="Center"/>
+                <constraints/>
                 <properties>
                   <font size="20"/>
                   <text value="Login"/>
@@ -151,7 +151,7 @@
               <component id="7231b" class="javax.swing.JLabel">
                 <constraints/>
                 <properties>
-                  <text value="Eromosele OKhilua U1671506"/>
+                  <text value="Eromosele Okhilua U1671506"/>
                 </properties>
               </component>
             </children>
@@ -167,7 +167,7 @@
           <minimumSize width="382" height="400"/>
           <preferredSize width="382" height="800"/>
           <requestFocusEnabled value="true"/>
-          <visible value="true"/>
+          <visible value="false"/>
         </properties>
         <border type="none"/>
         <children>
@@ -190,7 +190,7 @@
                 <properties>
                   <minimumSize width="64" height="40"/>
                   <preferredSize width="64" height="40"/>
-                  <requestFocusEnabled value="false"/>
+                  <requestFocusEnabled value="true"/>
                   <visible value="true"/>
                 </properties>
               </component>
@@ -345,6 +345,7 @@
                 </constraints>
                 <properties>
                   <text value="Register"/>
+                  <visible value="true"/>
                 </properties>
               </component>
               <hspacer id="dbbe3">
@@ -376,18 +377,39 @@
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
           </vspacer>
-          <component id="34920" class="javax.swing.JLabel">
+          <grid id="476e8" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
-            <properties>
-              <font size="20"/>
-              <minimumSize width="77" height="40"/>
-              <preferredSize width="77" height="40"/>
-              <text value="Register"/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="fbe1c" class="javax.swing.JLabel">
+                <constraints/>
+                <properties>
+                  <text value="Eromosele Okhilua U1671506"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="96311" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="748eb" class="javax.swing.JLabel">
+                <constraints/>
+                <properties>
+                  <font size="22"/>
+                  <text value="Register"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
     </children>

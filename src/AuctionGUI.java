@@ -38,6 +38,11 @@ public class AuctionGUI {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                firstNameTxtField.setText("");
+                secNameTxtField.setText("");
+                EmailTxtField.setText("");
+                passTextField.setText("");
+                confirmPasswordTxtField.setText("");
                 LoginPanel.setVisible(false);
                 RegisterPanel.setVisible(true);
             }
@@ -45,6 +50,8 @@ public class AuctionGUI {
         rtnToLoginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                userTxtField.setText("");
+                passTxtField.setText("");
                 LoginPanel.setVisible(true);
                 RegisterPanel.setVisible(false);
             }
