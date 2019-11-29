@@ -13,11 +13,7 @@ public class Lot implements Entry {
 
     }
 
-    public Lot(User owner, String lotID){
-        if (owner != null){
-            this.creator = owner;
-        }
-
+    public Lot(String lotID){
         if (lotID != null && lotID.length() > 0){
             this.lotID = lotID;
         }
