@@ -17,6 +17,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
+          <enabled value="true"/>
           <visible value="false"/>
         </properties>
         <border type="none"/>
@@ -50,7 +51,7 @@
               <component id="5acb0" class="javax.swing.JLabel">
                 <constraints border-constraint="North"/>
                 <properties>
-                  <text value="User Name"/>
+                  <text value="EOKUser Name"/>
                 </properties>
               </component>
               <component id="d3b3d" class="javax.swing.JTextField" binding="userTxtField">
@@ -164,10 +165,11 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
+          <enabled value="true"/>
           <minimumSize width="382" height="400"/>
           <preferredSize width="382" height="800"/>
           <requestFocusEnabled value="true"/>
-          <visible value="true"/>
+          <visible value="false"/>
         </properties>
         <border type="none"/>
         <children>
@@ -424,7 +426,7 @@
                   <text value="Username"/>
                 </properties>
               </component>
-              <component id="8833f" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+              <component id="8833f" class="javax.swing.JTextField" binding="userNameTxtField">
                 <constraints border-constraint="Center"/>
                 <properties>
                   <minimumSize width="64" height="40"/>
@@ -436,6 +438,34 @@
               </vspacer>
             </children>
           </grid>
+        </children>
+      </grid>
+      <grid id="a10ec" binding="userPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <minimumSize width="800" height="800"/>
+          <preferredSize width="800" height="800"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <tabbedpane id="88acf" binding="tabbedPane1" default-binding="true">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="9fd67" layout-manager="BorderLayout" hgap="0" vgap="0">
+                <constraints>
+                  <tabbedpane title="Untitled"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children/>
+              </grid>
+            </children>
+          </tabbedpane>
         </children>
       </grid>
     </children>

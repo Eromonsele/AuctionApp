@@ -1,20 +1,23 @@
 import net.jini.core.entry.*;
 
-public class User implements Entry {
+public class EOKUser implements Entry {
 
-    private String firstName;
-    private String secondName;
-    private String password;
-    private String emailAddress;
-    private String hint;
-    private String userId;
+    public String firstName;
+    public String secondName;
+    public String password;
+    public String emailAddress;
+    public String userId;
 
-    public User() {
+    public EOKUser() {
     }
 
-    public User(String usrId, String pswd) {
-        this.userId = usrId;
-        this.password = pswd;
+    public EOKUser(String usrId){
+        userId = usrId;
+    }
+
+    public EOKUser(String usrId, String pswd) {
+        userId = usrId;
+        password = pswd;
     }
 
     public String getFirstName() {

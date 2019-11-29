@@ -5,7 +5,7 @@ public class Lot implements Entry {
     private String itemName;
     private float startingPrice;
     private float buyOutPrice;
-    private User creator;
+    private EOKUser creator;
     private String lotID;
 
 
@@ -44,7 +44,7 @@ public class Lot implements Entry {
         this.buyOutPrice = buyOutPrice;
     }
 
-    public User getCreator() {
+    public EOKUser getCreator() {
         return creator;
     }
 }

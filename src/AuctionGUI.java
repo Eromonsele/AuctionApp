@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class AuctionGUI {
@@ -19,20 +20,23 @@ public class AuctionGUI {
     private JTextField confirmPasswordTxtField;
     private JButton usrRegisterBtn;
     private JButton rtnToLoginBtn;
-    private JTextField textField1;
-    private SessionManager sessionManager = new SessionManager();
+    private JTextField userNameTxtField;
+    private JPanel userPanel;
+    private JTabbedPane tabbedPane1;
+    private SessionManager sessionManager;
 
     public AuctionGUI() {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Boolean result = sessionManager.loginUser(userTxtField.getText(),passTxtField.getPassword().toString());
+                sessionManager = new SessionManager();
+                Boolean result = sessionManager.loginUser(userTxtField.getText(),passTxtField.getText());
                 if (result == false){
                   JOptionPane.showMessageDialog(LoginPanel,"Login not working");
                   return;
                  }
                 //open user GUI interface, with a welcome user on top
-
+                //
                 JOptionPane.showMessageDialog(LoginPanel,"Login working");
 
             }
@@ -44,6 +48,7 @@ public class AuctionGUI {
                 secNameTxtField.setText("");
                 EmailTxtField.setText("");
                 passTextField.setText("");
+                userNameTxtField.setText("");
                 confirmPasswordTxtField.setText("");
                 LoginPanel.setVisible(false);
                 RegisterPanel.setVisible(true);
@@ -61,12 +66,21 @@ public class AuctionGUI {
         usrRegisterBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //send it in as an array
+                sessionManager= new SessionManager();
+                String promptMessage = checkRegistrationForm();
+                if (promptMessage != "Registration completed"){
+                    JOptionPane.showMessageDialog(RegisterPanel, promptMessage);
+                    return;
+                }
+                HashMap<String,String> userInfo = new HashMap<String, String>();
+                userInfo.put("firstName",firstNameTxtField.getText().toString());
+                userInfo.put("secondName",secNameTxtField.getText().toString());
+                userInfo.put("userName",userNameTxtField.getText().toString());
+                userInfo.put("email",EmailTxtField.getText().toString());
+                userInfo.put("password",passTextField.getText().toString());
 
-                Boolean result = sessionManager.registerUser();
-
-                if (result == false){
-
+                if (!sessionManager.registerUser(userInfo)){
+                    JOptionPane.showMessageDialog(RegisterPanel, "Registration not complete");
                     return;
                 }
             }
@@ -74,8 +88,10 @@ public class AuctionGUI {
     }
 
     /**
-     * checkRegistrationForm:
-     * @return
+     * checkRegistrationForm: Checks the form information before it is submitted to the space
+     *
+     * @return String Error message if error occurs
+     *
      */
     private String checkRegistrationForm(){
         if(firstNameTxtField.getText().isEmpty()){
@@ -84,6 +100,10 @@ public class AuctionGUI {
         
         if (secNameTxtField.getText().isEmpty()){
             return "Second/Sur Name is blank";
+        }
+
+        if (userNameTxtField.getText().isEmpty()){
+            return "UserName is blank";
         }
         
         if (EmailTxtField.getText().isEmpty()){
@@ -98,10 +118,15 @@ public class AuctionGUI {
             return "Password needs to be more 6 characters, please retype";
         }
 
+        if (!confirmPasswordTxtField.getText().equals(passTextField.getText())){
+            return "Password and confirm password input doesn't match";
+        }
+
         if(!isValid(EmailTxtField.getText())){
             return "Email Address is not valid, Please retype";
         }
-        return "Registration";
+
+        return "Registration completed";
     }
 
     public boolean isValid(String email)
