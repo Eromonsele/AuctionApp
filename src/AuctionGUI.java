@@ -21,8 +21,9 @@ public class AuctionGUI {
     private JButton usrRegisterBtn;
     private JButton rtnToLoginBtn;
     private JTextField userNameTxtField;
-    private JPanel userPanel;
     private JTabbedPane tabbedPane1;
+    private JTabbedPane tabbedPane2;
+    private JList list1;
     private SessionManager sessionManager;
 
     public AuctionGUI() {
@@ -41,6 +42,7 @@ public class AuctionGUI {
 
             }
         });
+
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -54,6 +56,7 @@ public class AuctionGUI {
                 RegisterPanel.setVisible(true);
             }
         });
+
         rtnToLoginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -63,6 +66,7 @@ public class AuctionGUI {
                 RegisterPanel.setVisible(false);
             }
         });
+
         usrRegisterBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -80,7 +84,10 @@ public class AuctionGUI {
                 userInfo.put("password",passTextField.getText().toString());
 
                 if (!sessionManager.registerUser(userInfo)){
-                    JOptionPane.showMessageDialog(RegisterPanel, "Registration not complete");
+                    if (sessionManager.errorMessage.isEmpty()){
+                        sessionManager.errorMessage = "Registration not complete";
+                    }
+                    JOptionPane.showMessageDialog(RegisterPanel, sessionManager.errorMessage);
                     return;
                 }
             }
@@ -129,6 +136,12 @@ public class AuctionGUI {
         return "Registration completed";
     }
 
+    /**
+     *  isValid : Check if email address is a valid email address
+     *
+     * @param  String email an email address
+     * @return Boolean
+     */
     public boolean isValid(String email)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+

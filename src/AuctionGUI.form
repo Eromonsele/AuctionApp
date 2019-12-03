@@ -13,7 +13,7 @@
     <children>
       <grid id="49d83" binding="LoginPanel" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -161,13 +161,13 @@
       </grid>
       <grid id="6f64" binding="RegisterPanel" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <enabled value="true"/>
-          <minimumSize width="382" height="400"/>
-          <preferredSize width="382" height="800"/>
+          <minimumSize width="800" height="800"/>
+          <preferredSize width="800" height="800"/>
           <requestFocusEnabled value="true"/>
           <visible value="false"/>
         </properties>
@@ -440,23 +440,159 @@
           </grid>
         </children>
       </grid>
-      <grid id="a10ec" binding="userPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="53418" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0" ipadx="800" ipady="800"/>
         </constraints>
         <properties>
-          <minimumSize width="800" height="800"/>
-          <preferredSize width="800" height="800"/>
+          <minimumSize width="0" height="0"/>
         </properties>
         <border type="none"/>
         <children>
-          <tabbedpane id="88acf" binding="tabbedPane1" default-binding="true">
+          <tabbedpane id="166ac" binding="tabbedPane1" default-binding="true">
             <constraints border-constraint="Center"/>
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="9fd67" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="31d1d" layout-manager="BorderLayout" hgap="0" vgap="0">
+                <constraints>
+                  <tabbedpane title="Featured Item"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <tabbedpane id="91538" binding="tabbedPane2" default-binding="true">
+                    <constraints border-constraint="North"/>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <grid id="43e7b" layout-manager="BorderLayout" hgap="0" vgap="0">
+                        <constraints>
+                          <tabbedpane title="Latest Item"/>
+                        </constraints>
+                        <properties>
+                          <preferredSize width="800" height="735"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <grid id="8662a" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints border-constraint="West"/>
+                            <properties>
+                              <minimumSize width="400" height="60"/>
+                              <preferredSize width="400" height="0"/>
+                            </properties>
+                            <border type="none"/>
+                            <children>
+                              <component id="f2d68" class="javax.swing.JList" binding="list1" default-binding="true">
+                                <constraints border-constraint="Center"/>
+                                <properties/>
+                              </component>
+                            </children>
+                          </grid>
+                          <grid id="3bc1d" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+                            <constraints border-constraint="East"/>
+                            <properties>
+                              <minimumSize width="400" height="0"/>
+                              <preferredSize width="400" height="0"/>
+                            </properties>
+                            <border type="none"/>
+                            <children>
+                              <grid id="13924" layout-manager="BorderLayout" hgap="0" vgap="0">
+                                <constraints/>
+                                <properties>
+                                  <preferredSize width="400" height="16"/>
+                                </properties>
+                                <border type="none"/>
+                                <children>
+                                  <component id="287e7" class="javax.swing.JLabel">
+                                    <constraints border-constraint="Center"/>
+                                    <properties>
+                                      <text value="Item Name"/>
+                                    </properties>
+                                  </component>
+                                </children>
+                              </grid>
+                              <grid id="a4405" layout-manager="BorderLayout" hgap="0" vgap="0">
+                                <constraints/>
+                                <properties>
+                                  <preferredSize width="400" height="200"/>
+                                </properties>
+                                <border type="none"/>
+                                <children/>
+                              </grid>
+                              <grid id="d4243" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+                                <constraints/>
+                                <properties>
+                                  <preferredSize width="400" height="435"/>
+                                </properties>
+                                <border type="none"/>
+                                <children>
+                                  <grid id="36879" layout-manager="BorderLayout" hgap="0" vgap="0">
+                                    <constraints/>
+                                    <properties>
+                                      <minimumSize width="400" height="60"/>
+                                      <preferredSize width="400" height="60"/>
+                                    </properties>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="843a" class="javax.swing.JLabel">
+                                        <constraints border-constraint="North"/>
+                                        <properties>
+                                          <font size="18" style="1"/>
+                                          <text value="Item Name:"/>
+                                        </properties>
+                                      </component>
+                                      <component id="e84e7" class="javax.swing.JLabel">
+                                        <constraints border-constraint="Center"/>
+                                        <properties>
+                                          <text value="Sir Place stuff"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                  <grid id="e48b" layout-manager="BorderLayout" hgap="0" vgap="0">
+                                    <constraints/>
+                                    <properties>
+                                      <minimumSize width="400" height="60"/>
+                                      <preferredSize width="400" height="60"/>
+                                    </properties>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="f0b48" class="javax.swing.JLabel">
+                                        <constraints border-constraint="North"/>
+                                        <properties>
+                                          <font size="18" style="1"/>
+                                          <text value="Item Name:"/>
+                                        </properties>
+                                      </component>
+                                      <component id="8b55f" class="javax.swing.JLabel">
+                                        <constraints border-constraint="Center"/>
+                                        <properties>
+                                          <text value="Sir Place stuff"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                </children>
+                              </grid>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                      <grid id="23ff5" layout-manager="BorderLayout" hgap="0" vgap="0">
+                        <constraints>
+                          <tabbedpane title="Top 10"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children/>
+                      </grid>
+                    </children>
+                  </tabbedpane>
+                </children>
+              </grid>
+              <grid id="37451" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
                   <tabbedpane title="Untitled"/>
                 </constraints>

@@ -10,6 +10,9 @@ public class SessionManager {
 
     private JavaSpace space;
 
+    public String errorMessage;
+    public EOKUser sessionUser;
+
     /**
      *
      */
@@ -45,17 +48,18 @@ public class SessionManager {
                     catch (Exception e){
                         e.printStackTrace();
                     }
+                }else{
+                    errorMessage = "User is already exist";
                 }
             } catch (Exception e){
                 e.printStackTrace();
             }
         }
-
         return false;
     }
 
     /**
-     *
+     * LoginUser: Logs in user
      * @param userName
      * @param password
      * @return
@@ -68,12 +72,20 @@ public class SessionManager {
                     EOKUser EOKUserLogin = (EOKUser) space.readIfExists(EOKUserTemplate, null, TWO_SECONDS);
 
                     if (EOKUserLogin != null) {
+                        EOKUserLogin.loggedIn = true;
+                        sessionUser = EOKUserLogin;
                         return true;
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+        return false;
+    }
+
+    public boolean addItem(String userName,Map<String,String> itemInfo){
+        sessionUser.addItem(itemInfo);
 
         return false;
     }

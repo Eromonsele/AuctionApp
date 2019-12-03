@@ -19,6 +19,10 @@
           <root url="jar:///usr/local/apache-river-3.0.0/lib/jsk-platform.jar!/" />
           <root url="jar:///usr/local/apache-river-3.0.0/lib/outrigger.jar!/" />
           <root url="jar:///usr/local/apache-river-3.0.0/lib/reggie.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Downloads/apache-river-3.0.0/lib/jsk-lib.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Downloads/apache-river-3.0.0/lib/jsk-platform.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Downloads/apache-river-3.0.0/lib/outrigger.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Downloads/apache-river-3.0.0/lib/reggie.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
@@ -31,6 +35,7 @@
         <CLASSES>
           <root url="jar:///local/apache-river-3.0.0/lib-dl/reggie-dl.jar!/" />
           <root url="jar:///usr/local/apache-river-3.0.0/lib-dl/reggie-dl.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Downloads/apache-river-3.0.0/lib-dl/reggie-dl.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
