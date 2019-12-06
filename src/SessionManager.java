@@ -1,6 +1,8 @@
 import net.jini.core.lease.Lease;
+import net.jini.core.transaction.TransactionException;
 import net.jini.space.JavaSpace;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 
 public class SessionManager {
@@ -39,9 +41,9 @@ public class SessionManager {
                 if (EOKUserRegister == null){
                     try{
                         EOKUser EOKUserReg = new EOKUser(userInfo.get("userName"),userInfo.get("password"));
-                        EOKUserReg.setFirstName(userInfo.get("firstName"));
-                        EOKUserReg.setSecondName(userInfo.get("secondName"));
-                        EOKUserReg.setEmailAddress(userInfo.get("email"));
+                        EOKUserReg.firstName = userInfo.get("firstName");
+                        EOKUserReg.secondName = userInfo.get("secondName");
+                        EOKUserReg.emailAddress = userInfo.get("email");
                         space.write(EOKUserReg,null, Lease.FOREVER);
                         return true;
                     }
@@ -84,9 +86,19 @@ public class SessionManager {
         return false;
     }
 
-    public boolean addItem(String userName,Map<String,String> itemInfo){
-        sessionUser.addItem(itemInfo);
+    public boolean addItem(Map<String,String> lotInfo){
+        try {
+            Lot lotItem = new Lot(sessionUser, lotInfo.get("lotName"));
+            lotItem.lotBuyOutPrice = Float.parseFloat(lotInfo.get("lotBuyoutPrice"));
+            lotItem.lotDescription = lotInfo.get("lotDescription");
+            lotItem.lotStartPrice = Float.parseFloat(lotInfo.get("lotStartPrice"));
+            lotItem.sold = false;
 
+            space.write(lotItem,null, Lease.FOREVER);
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return false;
     }
 

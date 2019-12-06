@@ -22,8 +22,6 @@ public class AuctionGUI {
     private JButton rtnToLoginBtn;
     private JTextField userNameTxtField;
     private JTabbedPane tabbedPane1;
-    private JTabbedPane tabbedPane2;
-    private JList list1;
     private SessionManager sessionManager;
 
     public AuctionGUI() {
