@@ -440,32 +440,100 @@
           </grid>
         </children>
       </grid>
-      <grid id="53418" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="53418" binding="UserPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0" ipadx="800" ipady="800"/>
         </constraints>
         <properties>
           <minimumSize width="0" height="0"/>
+          <visible value="true"/>
         </properties>
         <border type="none"/>
         <children>
-          <tabbedpane id="166ac" binding="tabbedPane1" default-binding="true">
-            <constraints border-constraint="Center"/>
-            <properties/>
+          <grid id="eff6c" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-15653311"/>
+            </properties>
             <border type="none"/>
             <children>
-              <grid id="31d1d" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <component id="2a0a1" class="javax.swing.JLabel" binding="welcomeMessage">
+                <constraints border-constraint="West"/>
+                <properties>
+                  <font name="Courier New" size="22"/>
+                  <foreground color="-37376"/>
+                  <text value="Welcome "/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="false"/>
+                </clientProperties>
+              </component>
+              <component id="3aae5" class="javax.swing.JButton" binding="logOutButton" default-binding="true">
+                <constraints border-constraint="East"/>
+                <properties>
+                  <borderPainted value="false"/>
+                  <contentAreaFilled value="false"/>
+                  <font name="Courier New" size="16"/>
+                  <foreground color="-37376"/>
+                  <label value="Log-Out"/>
+                  <rolloverEnabled value="true"/>
+                  <selected value="false"/>
+                  <text value="Log-Out"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <vspacer id="bd7df">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <tabbedpane id="5f6f1" binding="tabbedPane1" default-binding="true">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="200" height="200"/>
+              </grid>
+            </constraints>
+            <properties>
+              <tabLayoutPolicy value="1"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <grid id="46606" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <tabbedpane title="Featured Item"/>
+                  <tabbedpane title="Featured Items"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="fabd1" class="javax.swing.JList" binding="featuredList">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
+                </children>
+              </grid>
+              <grid id="626fc" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <tabbedpane title="My Items"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children/>
               </grid>
-              <grid id="37451" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="67f7c" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <tabbedpane title="Untitled"/>
+                  <tabbedpane title="My Bids"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>

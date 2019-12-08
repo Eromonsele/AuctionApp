@@ -10,7 +10,7 @@ public class EOKUser implements Entry {
     public String password;
     public String emailAddress;
     public String userId;
-    public boolean loggedIn;
+//    public Boolean loggedIn;
 
     public EOKUser() {
     }

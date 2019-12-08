@@ -2,8 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
+import javax.swing.plaf.basic.BasicLookAndFeel;
 
 public class AuctionGUI {
     private JPanel WindowsPanel;
@@ -21,10 +25,35 @@ public class AuctionGUI {
     private JButton usrRegisterBtn;
     private JButton rtnToLoginBtn;
     private JTextField userNameTxtField;
+    private JPanel UserPanel;
+    private JLabel welcomeMessage;
     private JTabbedPane tabbedPane1;
+    private JButton logOutButton;
+    private JList featuredList;
+    private JButton addItemBtn;
+    private JPanel lotListPanel;
     private SessionManager sessionManager;
+    private JPanel addItemPanel;
+    private AddItemForm addItemForm;
 
     public AuctionGUI() {
+
+        LoginPanel.setVisible(true);
+        RegisterPanel.setVisible(false);
+        UserPanel.setVisible(false);
+
+        sessionManager= new SessionManager();
+        sessionManager.preLoad();
+        if (sessionManager.loginUser("admin","root")){
+            welcomeMessage.setText("Welcome " + sessionManager.sessionUser.firstName);
+            LoginPanel.setVisible(false);
+            RegisterPanel.setVisible(false);
+            UserPanel.setVisible(true);
+        }
+
+//        featuredList = new JList(sessionManager.getAllLots());
+//        featuredList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -36,8 +65,10 @@ public class AuctionGUI {
                  }
                 //open user GUI interface, with a welcome user on top
                 //
-                JOptionPane.showMessageDialog(LoginPanel,"Login working");
-
+                welcomeMessage.setText("Welcome " + sessionManager.sessionUser.firstName);
+                LoginPanel.setVisible(false);
+                RegisterPanel.setVisible(false);
+                UserPanel.setVisible(true);
             }
         });
 
@@ -52,6 +83,7 @@ public class AuctionGUI {
                 confirmPasswordTxtField.setText("");
                 LoginPanel.setVisible(false);
                 RegisterPanel.setVisible(true);
+                UserPanel.setVisible(false);
             }
         });
 
@@ -62,6 +94,7 @@ public class AuctionGUI {
                 passTxtField.setText("");
                 LoginPanel.setVisible(true);
                 RegisterPanel.setVisible(false);
+                UserPanel.setVisible(false);
             }
         });
 
@@ -90,6 +123,16 @@ public class AuctionGUI {
                 }
             }
         });
+
+//        additemButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                addItemForm = new AddItemForm(sessionManager);
+//                addItemForm.setLocationByPlatform(false);
+//                addItemForm.setLocationRelativeTo(WindowsPanel);
+//                addItemForm.setVisible(true);
+//            }
+//        });
     }
 
     /**
@@ -137,7 +180,7 @@ public class AuctionGUI {
     /**
      *  isValid : Check if email address is a valid email address
      *
-     * @param  String email an email address
+     * @param  email an email address
      * @return Boolean
      */
     public boolean isValid(String email)
@@ -154,7 +197,13 @@ public class AuctionGUI {
     }
 
     public static void main(String[] args) {
+        JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame frame = new JFrame("Auction Application");
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        };
 
         frame.setResizable(false);
 

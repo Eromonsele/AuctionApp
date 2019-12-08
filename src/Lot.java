@@ -4,22 +4,22 @@ public class Lot implements Entry {
 
     public String lotName;
     public String lotDescription;
-    public float lotStartPrice;
-    public float lotBuyOutPrice;
+    public Float lotStartPrice;
+    public Float lotBuyOutPrice;
     public EOKUser lotOwner;
-    public boolean sold;
+    public Boolean sold;
 
 
     public Lot(){
 
     }
     public Lot(EOKUser owner){
-        this.lotOwner = owner;
+        lotOwner = owner;
     }
 
-    public Lot(EOKUser owner, String lotName){
-        this.lotOwner = owner;
-        this.lotName = lotName;
+    public Lot(EOKUser owner, String lName){
+        lotOwner = owner;
+        lotName = lName;
     }
 
 }
