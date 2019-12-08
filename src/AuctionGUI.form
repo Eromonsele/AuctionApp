@@ -511,24 +511,51 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="fabd1" class="javax.swing.JList" binding="featuredList">
+                  <scrollpane id="84775">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="50"/>
-                      </grid>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
-                  </component>
+                    <border type="none"/>
+                    <children>
+                      <component id="fabd1" class="javax.swing.JList" binding="featuredList">
+                        <constraints/>
+                        <properties>
+                          <preferredSize width="0" height="400"/>
+                          <requestFocusEnabled value="false"/>
+                          <selectedIndex value="-1"/>
+                          <selectionMode value="0"/>
+                        </properties>
+                        <clientProperties>
+                          <List.isFileList class="java.lang.Boolean" value="false"/>
+                        </clientProperties>
+                      </component>
+                    </children>
+                  </scrollpane>
                 </children>
               </grid>
-              <grid id="626fc" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="626fc" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <tabbedpane title="My Items"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
-                <children/>
+                <children>
+                  <component id="5eec4" class="javax.swing.JButton" binding="addItemsButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Add Items"/>
+                    </properties>
+                  </component>
+                  <vspacer id="cb5f6">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
+                </children>
               </grid>
               <grid id="67f7c" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>

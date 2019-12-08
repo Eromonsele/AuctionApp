@@ -1,9 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -30,11 +28,13 @@ public class AuctionGUI {
     private JTabbedPane tabbedPane1;
     private JButton logOutButton;
     private JList featuredList;
+    private JButton addItemsButton;
     private JButton addItemBtn;
     private JPanel lotListPanel;
     private SessionManager sessionManager;
     private JPanel addItemPanel;
     private AddItemForm addItemForm;
+    private DefaultListModel<String> lotItems;
 
     public AuctionGUI() {
 
@@ -50,10 +50,6 @@ public class AuctionGUI {
             RegisterPanel.setVisible(false);
             UserPanel.setVisible(true);
         }
-
-//        featuredList = new JList(sessionManager.getAllLots());
-//        featuredList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -133,6 +129,41 @@ public class AuctionGUI {
 //                addItemForm.setVisible(true);
 //            }
 //        });
+
+//        lotItems = new DefaultListModel<String>();
+//        lotItems.addElement("Drake");
+//        lotItems.addElement("Jane Doe");
+//        lotItems.addElement("John Smith");
+//        lotItems.addElement("Kathy Green");
+//        if(sessionManager.getAllLots().size() > 0){
+//            lotItems.addElement(sessionManager.getAllLots().get(0).lotName);
+//        }
+
+        featuredList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        featuredList.setLayoutOrientation(JList.VERTICAL);
+        featuredList.setVisibleRowCount(-1);
+        featuredList.setModel(sessionManager.getAllLots());
+
+
+        addItemsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addItemForm = new AddItemForm(sessionManager);
+                addItemForm.setLocationByPlatform(false);
+                addItemForm.setLocationRelativeTo(WindowsPanel);
+                addItemForm.setVisible(true);
+
+                addItemForm.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        featuredList.setModel(sessionManager.getAllLots());
+                        System.out.println("closed");
+                    }
+                });
+            }
+        });
+
+        new PopulateTableNotify(sessionManager);
     }
 
     /**
@@ -196,6 +227,9 @@ public class AuctionGUI {
         return pat.matcher(email).matches();
     }
 
+    public void updateList(){
+
+    }
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame frame = new JFrame("Auction Application");
