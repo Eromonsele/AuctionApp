@@ -58,6 +58,12 @@ public class AddItemForm extends JDialog {
 
     private void onOK() {
         Map<String, String> lotInfo = new HashMap<String, String>();
+
+        if (lotNameTxtField.getText().isEmpty() || lotBuyOutPriceTextField.getText().isEmpty() || lotDescTxtArea.getText().isEmpty() || lotBidPriceTxtMedia.getText().isEmpty()){
+            JOptionPane.showMessageDialog(contentPane, "Please all fields are required to be filled, fuck face");
+            return;
+        }
+
         lotInfo.put("lotName",lotNameTxtField.getText());
         lotInfo.put("lotBuyoutPrice",lotBuyOutPriceTextField.getText());
         lotInfo.put("lotDescription",lotDescTxtArea.getText());

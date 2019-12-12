@@ -440,8 +440,7 @@
           </grid>
         </children>
       </grid>
-      <grid id="53418" binding="UserPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
+      <grid id="53418" binding="UserPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0" ipadx="800" ipady="800"/>
@@ -453,9 +452,7 @@
         <border type="none"/>
         <children>
           <grid id="eff6c" layout-manager="BorderLayout" hgap="0" vgap="0">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
+            <constraints border-constraint="North"/>
             <properties>
               <background color="-15653311"/>
             </properties>
@@ -487,23 +484,14 @@
               </component>
             </children>
           </grid>
-          <vspacer id="bd7df">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
           <tabbedpane id="5f6f1" binding="tabbedPane1" default-binding="true">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="200" height="200"/>
-              </grid>
-            </constraints>
+            <constraints border-constraint="Center"/>
             <properties>
               <tabLayoutPolicy value="1"/>
             </properties>
             <border type="none"/>
             <children>
-              <grid id="46606" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="46606" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <tabbedpane title="Featured Items"/>
@@ -511,17 +499,24 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <scrollpane id="84775">
+                  <scrollpane id="84775" binding="scrollPane1">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <preferredSize width="200" height="128"/>
+                    </properties>
+                    <clientProperties>
+                      <html.disable class="java.lang.Boolean" value="false"/>
+                    </clientProperties>
                     <border type="none"/>
                     <children>
                       <component id="fabd1" class="javax.swing.JList" binding="featuredList">
                         <constraints/>
                         <properties>
-                          <preferredSize width="0" height="400"/>
+                          <maximumSize width="-1" height="-1"/>
+                          <minimumSize width="-1" height="-1"/>
+                          <preferredSize width="-1" height="-1"/>
                           <requestFocusEnabled value="false"/>
                           <selectedIndex value="-1"/>
                           <selectionMode value="0"/>
@@ -532,6 +527,14 @@
                       </component>
                     </children>
                   </scrollpane>
+                  <grid id="7d3f7" layout-manager="BorderLayout" hgap="0" vgap="0">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children/>
+                  </grid>
                 </children>
               </grid>
               <grid id="626fc" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

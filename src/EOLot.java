@@ -1,6 +1,6 @@
 import net.jini.core.entry.Entry;
 
-public class Lot implements Entry {
+public class EOLot implements Entry {
 
     public String lotName;
     public String lotDescription;
@@ -10,14 +10,14 @@ public class Lot implements Entry {
     public Boolean sold;
 
 
-    public Lot(){
+    public EOLot(){
 
     }
-    public Lot(EOKUser owner){
+    public EOLot(EOKUser owner){
         lotOwner = owner;
     }
 
-    public Lot(EOKUser owner, String lName){
+    public EOLot(EOKUser owner, String lName){
         lotOwner = owner;
         lotName = lName;
     }

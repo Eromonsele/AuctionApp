@@ -1,13 +1,10 @@
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.space.JavaSpace;
 
 import javax.swing.*;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -45,6 +42,8 @@ public class SessionManager {
 			System.err.println("Failed to find the javaspace");
 			System.exit(1);
 		}
+
+//		new PopulateTableNotify(new SessionManager());
 
 
 	}
@@ -123,13 +122,13 @@ public class SessionManager {
 				return false;
 			}
 
-			Lot lotItem = new Lot(sessionUser, lotInfo.get("lotName"));
-			lotItem.lotDescription = lotInfo.get("lotDescription");
-			lotItem.lotBuyOutPrice = lotBuyOutPrice;
-			lotItem.lotStartPrice = lotStartPrice;
-			lotItem.sold = false;
+			EOLot EOLotItem = new EOLot(sessionUser, lotInfo.get("lotName"));
+			EOLotItem.lotDescription = lotInfo.get("lotDescription");
+			EOLotItem.lotBuyOutPrice = lotBuyOutPrice;
+			EOLotItem.lotStartPrice = lotStartPrice;
+			EOLotItem.sold = false;
 
-			space.write(lotItem,null, Lease.FOREVER);
+			space.write(EOLotItem,null, Lease.FOREVER);
 			return true;
 		} catch (Exception e){
 			e.printStackTrace();
@@ -141,24 +140,129 @@ public class SessionManager {
 
 	}
 
-	public DefaultListModel<String> getAllLots(){
-		DefaultListModel<String> lotsCollection = new DefaultListModel<String>();
+
+
+	public void getLotsByUser(){
+
+	}
+
+	public void setBid(EOKUser bidder, Float bidPrice, EOLot EOLotItem){
+		Bid template = new Bid(bidder,bidPrice);
+		template.EOLotItem = EOLotItem;
+		try {
+			space.write(template,null, TWO_SECONDS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param EOLotItem
+	 * @return
+	 */
+	public DefaultListModel<Bid> getBids(EOLot EOLotItem){
+		DefaultListModel<Bid> bidsCollection = new DefaultListModel<Bid>();
+
+		try {
+			Transaction.Created getBidsTrc = null;
 
 			try {
-				Transaction.Created trc = null;
+				getBidsTrc = TransactionFactory.create(mgr, THREE_SECONDS);
+			} catch (Exception e) {
+				System.out.println("Could not create transaction " + e);
+			}
 
-				try {
-					trc = TransactionFactory.create(mgr, THREE_SECONDS);
-				} catch (Exception e) {
-					System.out.println("Could not create transaction " + e);
-				}
-
-				Transaction txn = trc.transaction;
-				int counter = 0;
+			Transaction txn = getBidsTrc.transaction;
+			int counter = 0;
 			while(true) {
 				try {
-					Lot lotItem = new Lot();
-					Lot lots = (Lot) space.takeIfExists(lotItem, txn, ONE_SECOND);
+					Bid template = new Bid(EOLotItem);
+					Bid bids = (Bid) space.takeIfExists(template, txn, ONE_SECOND);
+					if (bids == null) {
+						txn.abort();
+						break;
+					} else {
+						bidsCollection.addElement(bids);
+					}
+//					space.write(lots, txn, TWO_SECONDS);
+				} catch (Exception e) {
+					e.printStackTrace();
+					txn.abort();
+					break;
+				}
+			}
+			// ... and commit the transaction.
+//				txn.commit();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		}
+		return bidsCollection;
+
+	}
+
+	public DefaultListModel<String> getAllBids(){
+		DefaultListModel<String> lotsCollection = new DefaultListModel<String>();
+
+		try {
+			Transaction.Created trc = null;
+
+			try {
+				trc = TransactionFactory.create(mgr, THREE_SECONDS);
+			} catch (Exception e) {
+				System.out.println("Could not create transaction " + e);
+			}
+
+			Transaction txn = trc.transaction;
+			int counter = 0;
+			while(true) {
+				try {
+					EOLot EOLotItem = new EOLot();
+					EOLot lots = (EOLot) space.takeIfExists(EOLotItem, txn, ONE_SECOND);
+					if (lots == null) {
+						break;
+					} else {
+						System.out.println(lots.lotName);
+						lotsCollection.addElement(lots.lotName);
+					}
+//					space.write(lots, txn, TWO_SECONDS);
+				} catch (Exception e) {
+					e.printStackTrace();
+					txn.abort();
+					break;
+				}
+			}
+			// ... and commit the transaction.
+				txn.commit();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		}
+		return lotsCollection;
+
+	}
+
+	public DefaultListModel<String> getHighestBidForItem(){
+		DefaultListModel<String> lotsCollection = new DefaultListModel<String>();
+
+		try {
+			Transaction.Created trc = null;
+
+			try {
+				trc = TransactionFactory.create(mgr, THREE_SECONDS);
+			} catch (Exception e) {
+				System.out.println("Could not create transaction " + e);
+			}
+
+			Transaction txn = trc.transaction;
+			int counter = 0;
+			while(true) {
+				try {
+					EOLot EOLotItem = new EOLot();
+					EOLot lots = (EOLot) space.takeIfExists(EOLotItem, txn, ONE_SECOND);
 					if (lots == null) {
 						txn.abort();
 						break;
@@ -173,30 +277,57 @@ public class SessionManager {
 					break;
 				}
 			}
-				// ... and commit the transaction.
+			// ... and commit the transaction.
 //				txn.commit();
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 //		}
 		return lotsCollection;
 
 	}
 
-	public void getLotsByUser(){
+	public DefaultListModel<String>  getBidByUser(){
+		DefaultListModel<String> lotsCollection = new DefaultListModel<String>();
 
-	}
+		try {
+			Transaction.Created trc = null;
 
-	public void setBid(){
+			try {
+				trc = TransactionFactory.create(mgr, THREE_SECONDS);
+			} catch (Exception e) {
+				System.out.println("Could not create transaction " + e);
+			}
 
-	}
+			Transaction txn = trc.transaction;
+			int counter = 0;
+			while(true) {
+				try {
+					EOLot EOLotItem = new EOLot();
+					EOLot lots = (EOLot) space.takeIfExists(EOLotItem, txn, ONE_SECOND);
+					if (lots == null) {
+						txn.abort();
+						break;
+					} else {
+						System.out.println(lots.lotName);
+						lotsCollection.addElement(lots.lotName);
+					}
+//					space.write(lots, txn, TWO_SECONDS);
+				} catch (Exception e) {
+					e.printStackTrace();
+					txn.abort();
+					break;
+				}
+			}
+			// ... and commit the transaction.
+//				txn.commit();
 
-	public void getBids(){
-
-	}
-
-	public void getBidByUser(){
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		}
+		return lotsCollection;
 
 	}
 
