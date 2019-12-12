@@ -5,6 +5,7 @@
       <xy x="20" y="20" width="800" height="800"/>
     </constraints>
     <properties>
+      <background color="-14209468"/>
       <minimumSize width="800" height="800"/>
       <preferredSize width="800" height="800"/>
       <visible value="true"/>
@@ -51,7 +52,7 @@
               <component id="5acb0" class="javax.swing.JLabel">
                 <constraints border-constraint="North"/>
                 <properties>
-                  <text value="EOUser Name"/>
+                  <text value="EOKUser Name"/>
                 </properties>
               </component>
               <component id="d3b3d" class="javax.swing.JTextField" binding="userTxtField">
@@ -487,24 +488,27 @@
           <tabbedpane id="5f6f1" binding="tabbedPane1" default-binding="true">
             <constraints border-constraint="Center"/>
             <properties>
+              <opaque value="false"/>
               <tabLayoutPolicy value="1"/>
             </properties>
             <border type="none"/>
             <children>
-              <grid id="46606" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
+              <grid id="46606" layout-manager="GridBagLayout">
                 <constraints>
                   <tabbedpane title="Featured Items"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <scrollpane id="84775" binding="scrollPane1">
+                  <scrollpane id="84775" binding="featuredListscrollPane">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag top="10" left="10" bottom="10" right="10" weightx="0.0" weighty="0.0" ipadx="400"/>
                     </constraints>
                     <properties>
-                      <preferredSize width="200" height="128"/>
+                      <maximumSize width="-1" height="-1"/>
+                      <minimumSize width="-1" height="-1"/>
+                      <preferredSize width="-1" height="-1"/>
                     </properties>
                     <clientProperties>
                       <html.disable class="java.lang.Boolean" value="false"/>
@@ -516,7 +520,8 @@
                         <properties>
                           <maximumSize width="-1" height="-1"/>
                           <minimumSize width="-1" height="-1"/>
-                          <preferredSize width="-1" height="-1"/>
+                          <opaque value="false"/>
+                          <preferredSize width="200" height="-1"/>
                           <requestFocusEnabled value="false"/>
                           <selectedIndex value="-1"/>
                           <selectionMode value="0"/>
@@ -527,13 +532,195 @@
                       </component>
                     </children>
                   </scrollpane>
-                  <grid id="7d3f7" layout-manager="BorderLayout" hgap="0" vgap="0">
+                  <grid id="7d3f7" binding="itemInfoPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag top="10" left="10" bottom="10" right="10" weightx="1.0" weighty="1.0"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <maximumSize width="-1" height="-1"/>
+                      <minimumSize width="-1" height="-1"/>
+                      <preferredSize width="-1" height="-1"/>
+                    </properties>
                     <border type="none"/>
-                    <children/>
+                    <children>
+                      <grid id="84d21" layout-manager="BorderLayout" hgap="0" vgap="0">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="78483" class="javax.swing.JLabel" binding="lotNamelabel">
+                            <constraints border-constraint="Center"/>
+                            <properties>
+                              <font name="Courier New" size="20"/>
+                              <text value=""/>
+                              <visible value="false"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <vspacer id="26591">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                      </vspacer>
+                      <grid id="67253" layout-manager="BorderLayout" hgap="0" vgap="0">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                            <minimum-size width="-1" height="100"/>
+                            <preferred-size width="-1" height="200"/>
+                          </grid>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="cdc5f" class="javax.swing.JLabel" binding="descLabel">
+                            <constraints border-constraint="North"/>
+                            <properties>
+                              <text value="Description"/>
+                              <visible value="false"/>
+                            </properties>
+                          </component>
+                          <scrollpane id="4008e" binding="descScrollPane">
+                            <constraints border-constraint="Center"/>
+                            <properties>
+                              <opaque value="false"/>
+                              <visible value="false"/>
+                            </properties>
+                            <border type="none"/>
+                            <children>
+                              <component id="bc493" class="javax.swing.JTextArea" binding="descTextAreaField">
+                                <constraints/>
+                                <properties>
+                                  <editable value="false"/>
+                                  <lineWrap value="true"/>
+                                  <opaque value="false"/>
+                                  <visible value="false"/>
+                                  <wrapStyleWord value="true"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </scrollpane>
+                        </children>
+                      </grid>
+                      <grid id="26b5c" binding="itemActionsField" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                            <minimum-size width="-1" height="30"/>
+                            <preferred-size width="-1" height="30"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <visible value="false"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <component id="7415a" class="javax.swing.JButton" binding="bidButton" default-binding="true">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Bid"/>
+                            </properties>
+                          </component>
+                          <component id="1d821" class="javax.swing.JButton" binding="buyOutButton" default-binding="true">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Buy Out"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <grid id="1758d" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="c432f" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Highest Bid"/>
+                            </properties>
+                          </component>
+                          <component id="1e7a0" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Starting Bid"/>
+                            </properties>
+                          </component>
+                          <component id="33a1b" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="BuyOut Price"/>
+                            </properties>
+                          </component>
+                          <grid id="31e1b" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="7621c" class="javax.swing.JLabel" binding="highestBidValueField">
+                                <constraints border-constraint="Center"/>
+                                <properties>
+                                  <horizontalAlignment value="4"/>
+                                  <horizontalTextPosition value="2"/>
+                                  <text value="Label"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <grid id="a0f8d" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="c1409" class="javax.swing.JLabel">
+                                <constraints border-constraint="South"/>
+                                <properties>
+                                  <horizontalAlignment value="4"/>
+                                  <text value="Label"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <grid id="abab0" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="3fe74" class="javax.swing.JLabel">
+                                <constraints border-constraint="Center"/>
+                                <properties>
+                                  <horizontalAlignment value="4"/>
+                                  <text value="Label"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                    </children>
                   </grid>
                 </children>
               </grid>

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicLookAndFeel;
 
 public class AuctionGUI {
@@ -27,9 +29,18 @@ public class AuctionGUI {
     private JLabel welcomeMessage;
     private JTabbedPane tabbedPane1;
     private JButton logOutButton;
-    private JList <String> featuredList;
+    private JList <Lot> featuredList;
     private JButton addItemsButton;
-    private JScrollPane scrollPane1;
+    private JScrollPane featuredListscrollPane;
+    private JPanel itemInfoPanel;
+    private JTextArea descTextAreaField;
+    private JLabel lotNamelabel;
+    private JLabel descLabel;
+    private JButton bidButton;
+    private JButton buyOutButton;
+    private JPanel itemActionsField;
+    private JScrollPane descScrollPane;
+    private JLabel highestBidValueField;
     private JButton addItemBtn;
     private JPanel lotListPanel;
     private SessionManager sessionManager;
@@ -52,7 +63,7 @@ public class AuctionGUI {
             UserPanel.setVisible(true);
         }
 
-        sessionManager.getAllLots();
+
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -127,7 +138,8 @@ public class AuctionGUI {
         featuredList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         featuredList.setLayoutOrientation(JList.VERTICAL);
         featuredList.setVisibleRowCount(-1);
-
+        featuredList.setModel(sessionManager.getAllLots());
+//        featuredList.set
 
         addItemsButton.addActionListener(new ActionListener() {
             @Override
@@ -140,13 +152,49 @@ public class AuctionGUI {
                 addItemForm.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        sessionManager.getAllLots();
+                        featuredList.setModel(sessionManager.getAllLots());
                     }
                 });
             }
         });
 
 
+        featuredList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent listSelectionEvent) {
+                lotNamelabel.setText(featuredList.getSelectedValue().lotName);
+                lotNamelabel.setVisible(true);
+                descLabel.setVisible(true);
+                descScrollPane.setVisible(true);
+                itemActionsField.setVisible(true);
+                descTextAreaField.setVisible(true);
+                descTextAreaField.setText(null);
+                descTextAreaField.setText(featuredList.getSelectedValue().lotDescription);
+
+            }
+        });
+        bidButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String bidValue = JOptionPane.showInputDialog(UserPanel,"What is your bid?");
+                if(sessionManager.isNumeric(bidValue)){
+                    if (sessionManager.setBid(Float.parseFloat(bidValue),featuredList.getSelectedValue())){
+                        JOptionPane.showMessageDialog(UserPanel, "Successful Bid");
+                    }else{
+                        JOptionPane.showMessageDialog(UserPanel, "Error!!");
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(UserPanel, "Please put in a number");
+                }
+
+            }
+        });
+        buyOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+            }
+        });
     }
 
     /**
@@ -225,7 +273,7 @@ public class AuctionGUI {
         frame.setResizable(false);
 
         Dimension size = new Dimension();
-        size.setSize(800, 800);
+        size.setSize(900, 900);
 
         frame.setPreferredSize(size);
 
@@ -235,7 +283,5 @@ public class AuctionGUI {
         frame.setVisible(true);
 
     }
-
-
 
 }

@@ -1,24 +1,21 @@
 import net.jini.core.entry.Entry;
 
 public class Bid implements Entry {
-    public EOLot EOLotItem;
+    public Lot LotItem;
     public Float bidValue;
-    public EOUser bidder;
+    public EOKUser bidder;
 
     public Bid() {
 
     }
 
-    public Bid(EOUser lOwner){
-        bidder = lOwner;
-    }
-
-    public Bid(EOUser lOwner, float bValue){
-        bidder = lOwner;
+    public Bid(Lot item, float bValue){
+        LotItem = item;
         bidValue = bValue;
     }
 
-    public Bid(EOLot item){
-        EOLotItem = item;
+    @Override
+    public String toString() {
+        return bidValue.toString();
     }
 }

@@ -1,6 +1,7 @@
 import net.jini.core.lease.Lease;
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
-import net.jini.space.JavaSpace;
 import net.jini.space.JavaSpace05;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ public class SessionManager {
 	private TransactionManager mgr;
 
 	public String errorMessage;
-	public EOUser sessionUser;
+	public EOKUser sessionUser;
 
 	/**
 	 *
@@ -45,6 +46,7 @@ public class SessionManager {
 			System.err.println("Failed to find the javaspace");
 			System.exit(1);
 		}
+
 	}
 
 	/**
@@ -55,16 +57,19 @@ public class SessionManager {
 	public boolean registerUser(Map<String,String> userInfo){
 		if (!userInfo.isEmpty()){
 			try {
-				EOUser EOUserTemplate = new EOUser(userInfo.get("userName"));
-				EOUser EOUserRegister = (EOUser)space.readIfExists(EOUserTemplate,null,TWO_MINUTES);
+				EOKUser EOKUserTemplate = new EOKUser(userInfo.get("userName"));
+				EOKUser EOKUserRegister = (EOKUser)space.readIfExists(EOKUserTemplate,null,TWO_MINUTES);
 
-				if (EOUserRegister == null){
+				if (EOKUserRegister == null){
 					try{
-						EOUser EOUserReg = new EOUser(userInfo.get("userName"),userInfo.get("password"));
-						EOUserReg.firstName = userInfo.get("firstName");
-						EOUserReg.secondName = userInfo.get("secondName");
-						EOUserReg.emailAddress = userInfo.get("email");
-						space.write(EOUserReg,null, Lease.FOREVER);
+						EOKUser EOKUserReg = new EOKUser(userInfo.get("userName"),userInfo.get("password"));
+						EOKUserReg.firstName = userInfo.get("firstName");
+						EOKUserReg.secondName = userInfo.get("secondName");
+						EOKUserReg.emailAddress = userInfo.get("email");
+//						EOKUserReg.bids = new ArrayList<Bid>();
+//						EOKUserReg.lots = new ArrayList<EOLot>();
+//						EOKUserReg.loggedIn = false;
+						space.write(EOKUserReg,null, Lease.FOREVER);
 						return true;
 					}
 					catch (Exception e){
@@ -90,12 +95,12 @@ public class SessionManager {
 
 		try {
 			if(!userName.isEmpty() && !password.isEmpty() ) {
-				EOUser EOUserTemplate = new EOUser(userName, password);
-				EOUser EOUserLogin = (EOUser) space.readIfExists(EOUserTemplate, null, TWO_SECONDS);
+				EOKUser EOKUserTemplate = new EOKUser(userName, password);
+				EOKUser EOKUserLogin = (EOKUser) space.readIfExists(EOKUserTemplate, null, TWO_SECONDS);
 
-				if (EOUserLogin != null) {
-//                        EOKUserLogin.loggedIn = true;
-					sessionUser = EOUserLogin;
+				if (EOKUserLogin != null) {
+//                     EOKUserLogin.loggedIn = true;
+					sessionUser = EOKUserLogin;
 					return true;
 				}
 			}
@@ -107,82 +112,185 @@ public class SessionManager {
 	}
 
 	public boolean addItem(Map<String,String> lotInfo){
-		try {
-			if(!isNumeric(lotInfo.get("lotBuyoutPrice")) || !isNumeric(lotInfo.get("lotStartPrice"))){
-				errorMessage = "BuyOut price and  Starting Bid Price needs to be a number.";
-				return false;
-			}
 
-			Float lotBuyOutPrice = Float.parseFloat(lotInfo.get("lotBuyoutPrice"));
-			Float lotStartPrice = Float.parseFloat(lotInfo.get("lotStartPrice"));
-
-			if(!amountChecker(lotBuyOutPrice) || !amountChecker(lotStartPrice)){
-				errorMessage = "BuyOut price and  Starting Bid Price needs to higher than 0.";
-				return false;
-			}
-
-			EOLot EOLotItem = new EOLot(sessionUser, lotInfo.get("lotName"));
-			EOLotItem.lotDescription = lotInfo.get("lotDescription");
-			EOLotItem.lotBuyOutPrice = lotBuyOutPrice;
-			EOLotItem.lotStartPrice = lotStartPrice;
-			EOLotItem.sold = false;
-
-			space.write(EOLotItem,null, Lease.FOREVER);
-			return true;
-		} catch (Exception e){
-			e.printStackTrace();
+		// check data sent
+		if(!isNumeric(lotInfo.get("lotBuyoutPrice")) || !isNumeric(lotInfo.get("lotStartPrice"))){
+			errorMessage = "BuyOut price and  Starting Bid Price needs to be a number.";
+			return false;
 		}
+
+		Float lotBuyOutPrice = Float.parseFloat(lotInfo.get("lotBuyoutPrice"));
+		Float lotStartPrice = Float.parseFloat(lotInfo.get("lotStartPrice"));
+
+		if(!amountChecker(lotBuyOutPrice) || !amountChecker(lotStartPrice)){
+			errorMessage = "BuyOut price and  Starting Bid Price needs to higher than 0.";
+			return false;
+		}
+
+		try{
+
+			Transaction.Created trc = null;
+
+			try {
+				trc = TransactionFactory.create(mgr, THREE_SECONDS);
+			} catch (Exception e){
+				System.out.println("Could not create transaction " + e);
+			}
+
+			Transaction txn = trc.transaction;
+
+			try{
+				// take user out
+//				EOKUser template = new EOKUser(sessionUser.userId);
+//				EOKUser EOKUser = (EOKUser) space.takeIfExists(template, txn, THREE_SECONDS);
+
+				// get Item Count in the space
+
+				//add Item
+				Lot LotItem = new Lot(sessionUser, lotInfo.get("lotName"));
+				LotItem.lotDescription = lotInfo.get("lotDescription");
+				LotItem.lotBuyOutPrice = lotBuyOutPrice;
+				LotItem.lotStartPrice = lotStartPrice;
+				LotItem.sold = false;
+//				EOLotItem.bids = new ArrayList<Bid>();
+
+				// if user exist
+//				if (EOKUser != null){
+////					EOKUser.lots.add(EOLotItem);
+//					//write the count to the space
+//
+//
+//					//write user back into the space
+//					space.write(EOKUser, txn, Lease.FOREVER);
+//
+//				}
+
+				//write the item to space
+				space.write(LotItem,txn, Lease.FOREVER);
+
+
+
+
+			}catch (Exception e){
+				System.out.println("Failed to read or write to space " + e);
+				txn.abort();
+				return false;
+			}
+
+			// ... and commit the transaction.
+			txn.commit();
+			return true;
+		} catch (Exception e) {
+			System.out.print("Transaction failed " + e);
+		}
+
 		return false;
 	}
 
-	public void removeLots(){
+	/**
+	 *
+	 * @param itemName
+	 * @return
+	 */
+	public boolean removeLots(String itemName){
+		try{
 
+			Transaction.Created trc = null;
+
+			try {
+				trc = TransactionFactory.create(mgr, THREE_SECONDS);
+			} catch (Exception e){
+				System.out.println("Could not create transaction " + e);
+			}
+
+			Transaction removeLots = trc.transaction;
+
+			try{
+
+				Lot template = new Lot(sessionUser, itemName);
+				try {
+					Lot lot = (Lot) space.takeIfExists(template,removeLots,FIVE_SECONDS);
+
+					if (lot != null){
+						EOKUser userTemplate = new EOKUser(sessionUser.userId);
+						EOKUser user = (EOKUser) space.takeIfExists(userTemplate, removeLots, FIVE_SECONDS);
+
+						if (user != null){
+//							for (int i = 0; i < user.lots.size(); i++) {
+//								if(user.lots.get(i).lotName == lot.lotName && user.lots.get(i).lotOwner == lot.lotOwner){
+//									user.lots.remove(i);
+//								}
+//							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}catch (Exception e){
+				System.out.println("Failed to read or write to space " + e);
+				removeLots.abort();
+				return false;
+			}
+
+			// ... and commit the transaction.
+			removeLots.commit();
+			return true;
+		} catch (Exception e) {
+			System.out.print("Transaction failed " + e);
+		}
+		return false;
 	}
-
-
 
 	public void getLotsByUser(){
 
 	}
 
-	public void setBid(EOUser bidder, Float bidPrice, EOLot EOLotItem){
-		Bid template = new Bid(bidder,bidPrice);
-		template.EOLotItem = EOLotItem;
+	public boolean setBid(Float bidPrice, Lot LotItem){
+		Bid template = new Bid(LotItem,bidPrice);
 		try {
 			space.write(template,null, TWO_SECONDS);
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 
-	public DefaultListModel<String> getAllLots(){
-		DefaultListModel<String> lotsCollection = new DefaultListModel<String>();
+	public String getLatestBid(Lot lotItem){
+//		Bid template = new Bid(lotItem);
+		return "";
+	}
+	public DefaultListModel<Lot> getAllLots(){
+		DefaultListModel<Lot> lotsCollection = new DefaultListModel<Lot>();
 
-		Collection<EOLot> templates = new ArrayList<EOLot>();
-		EOLot template = new EOLot();
+		Collection<Lot> templates = new ArrayList<Lot>();
+		Lot template = new Lot();
 		templates.add(template);
 			try {
 
-				Collection<EOLot> lots = space.take(templates, null, FIVE_SECONDS, NUMBER_OF_OBJECTS_TO_RETURN);
+				Collection<Lot> lots = space.take(templates, null, FIVE_SECONDS, NUMBER_OF_OBJECTS_TO_RETURN);
 
 				for (Object result : lots) {
-					EOLot eo = (EOLot) result;
-					lotsCollection.addElement(eo.lotName);
+					Lot eo = (Lot) result;
+					System.out.println(eo.lotName);
+					lotsCollection.addElement(eo);
+					space.write(eo,null,Lease.FOREVER);
 				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
-
 			}
 
 		return lotsCollection;
 	}
+
 	/**
 	 * isNumeric : Check if inputs are numbers
 	 * @param str
 	 * @return
 	 */
-	private boolean isNumeric(String str){
+	public boolean isNumeric(String str){
 		String emailRegex = "^[0-9]*$";
 
 		Pattern pat = Pattern.compile(emailRegex);
@@ -212,10 +320,6 @@ public class SessionManager {
 
 	public boolean amountChecker(Float amount){
 		return amount > 0;
-	}
-
-	public JavaSpace getSpace() {
-		return space;
 	}
 
 	public void preLoad(){
