@@ -1,10 +1,11 @@
 import net.jini.core.lease.Lease;
-import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.space.JavaSpace;
+import net.jini.space.JavaSpace05;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -14,12 +15,14 @@ public class SessionManager {
 	private static final long TWO_MINUTES = 2 * 1000 * 60;
 	private static final long ONE_SECOND = 1000;  // one thousand milliseconds
 	private static int THREE_SECONDS = 3000;  // 3000 milliseconds
+	private final static int FIVE_SECONDS = 1000 * 5; // that's 5000 Milliseconds
+	private final static int NUMBER_OF_OBJECTS_TO_RETURN = 100;
 
-	private JavaSpace space;
+	private JavaSpace05 space;
 	private TransactionManager mgr;
 
 	public String errorMessage;
-	public EOKUser sessionUser;
+	public EOUser sessionUser;
 
 	/**
 	 *
@@ -37,15 +40,11 @@ public class SessionManager {
 			System.exit(1);
 		}
 
-		space = SpaceUtils.getSpace();
+		space = (JavaSpace05)SpaceUtils.getSpace();
 		if (space == null){
 			System.err.println("Failed to find the javaspace");
 			System.exit(1);
 		}
-
-//		new PopulateTableNotify(new SessionManager());
-
-
 	}
 
 	/**
@@ -56,16 +55,16 @@ public class SessionManager {
 	public boolean registerUser(Map<String,String> userInfo){
 		if (!userInfo.isEmpty()){
 			try {
-				EOKUser EOKUserTemplate = new EOKUser(userInfo.get("userName"));
-				EOKUser EOKUserRegister = (EOKUser)space.readIfExists(EOKUserTemplate,null,TWO_MINUTES);
+				EOUser EOUserTemplate = new EOUser(userInfo.get("userName"));
+				EOUser EOUserRegister = (EOUser)space.readIfExists(EOUserTemplate,null,TWO_MINUTES);
 
-				if (EOKUserRegister == null){
+				if (EOUserRegister == null){
 					try{
-						EOKUser EOKUserReg = new EOKUser(userInfo.get("userName"),userInfo.get("password"));
-						EOKUserReg.firstName = userInfo.get("firstName");
-						EOKUserReg.secondName = userInfo.get("secondName");
-						EOKUserReg.emailAddress = userInfo.get("email");
-						space.write(EOKUserReg,null, Lease.FOREVER);
+						EOUser EOUserReg = new EOUser(userInfo.get("userName"),userInfo.get("password"));
+						EOUserReg.firstName = userInfo.get("firstName");
+						EOUserReg.secondName = userInfo.get("secondName");
+						EOUserReg.emailAddress = userInfo.get("email");
+						space.write(EOUserReg,null, Lease.FOREVER);
 						return true;
 					}
 					catch (Exception e){
@@ -91,12 +90,12 @@ public class SessionManager {
 
 		try {
 			if(!userName.isEmpty() && !password.isEmpty() ) {
-				EOKUser EOKUserTemplate = new EOKUser(userName, password);
-				EOKUser EOKUserLogin = (EOKUser) space.readIfExists(EOKUserTemplate, null, TWO_SECONDS);
+				EOUser EOUserTemplate = new EOUser(userName, password);
+				EOUser EOUserLogin = (EOUser) space.readIfExists(EOUserTemplate, null, TWO_SECONDS);
 
-				if (EOKUserLogin != null) {
+				if (EOUserLogin != null) {
 //                        EOKUserLogin.loggedIn = true;
-					sessionUser = EOKUserLogin;
+					sessionUser = EOUserLogin;
 					return true;
 				}
 			}
@@ -146,7 +145,7 @@ public class SessionManager {
 
 	}
 
-	public void setBid(EOKUser bidder, Float bidPrice, EOLot EOLotItem){
+	public void setBid(EOUser bidder, Float bidPrice, EOLot EOLotItem){
 		Bid template = new Bid(bidder,bidPrice);
 		template.EOLotItem = EOLotItem;
 		try {
@@ -156,181 +155,28 @@ public class SessionManager {
 		}
 	}
 
-	/**
-	 * 
-	 * @param EOLotItem
-	 * @return
-	 */
-	public DefaultListModel<Bid> getBids(EOLot EOLotItem){
-		DefaultListModel<Bid> bidsCollection = new DefaultListModel<Bid>();
-
-		try {
-			Transaction.Created getBidsTrc = null;
-
-			try {
-				getBidsTrc = TransactionFactory.create(mgr, THREE_SECONDS);
-			} catch (Exception e) {
-				System.out.println("Could not create transaction " + e);
-			}
-
-			Transaction txn = getBidsTrc.transaction;
-			int counter = 0;
-			while(true) {
-				try {
-					Bid template = new Bid(EOLotItem);
-					Bid bids = (Bid) space.takeIfExists(template, txn, ONE_SECOND);
-					if (bids == null) {
-						txn.abort();
-						break;
-					} else {
-						bidsCollection.addElement(bids);
-					}
-//					space.write(lots, txn, TWO_SECONDS);
-				} catch (Exception e) {
-					e.printStackTrace();
-					txn.abort();
-					break;
-				}
-			}
-			// ... and commit the transaction.
-//				txn.commit();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-//		}
-		return bidsCollection;
-
-	}
-
-	public DefaultListModel<String> getAllBids(){
+	public DefaultListModel<String> getAllLots(){
 		DefaultListModel<String> lotsCollection = new DefaultListModel<String>();
 
-		try {
-			Transaction.Created trc = null;
-
+		Collection<EOLot> templates = new ArrayList<EOLot>();
+		EOLot template = new EOLot();
+		templates.add(template);
 			try {
-				trc = TransactionFactory.create(mgr, THREE_SECONDS);
-			} catch (Exception e) {
-				System.out.println("Could not create transaction " + e);
-			}
 
-			Transaction txn = trc.transaction;
-			int counter = 0;
-			while(true) {
-				try {
-					EOLot EOLotItem = new EOLot();
-					EOLot lots = (EOLot) space.takeIfExists(EOLotItem, txn, ONE_SECOND);
-					if (lots == null) {
-						break;
-					} else {
-						System.out.println(lots.lotName);
-						lotsCollection.addElement(lots.lotName);
-					}
-//					space.write(lots, txn, TWO_SECONDS);
-				} catch (Exception e) {
-					e.printStackTrace();
-					txn.abort();
-					break;
+				Collection<EOLot> lots = space.take(templates, null, FIVE_SECONDS, NUMBER_OF_OBJECTS_TO_RETURN);
+
+				for (Object result : lots) {
+					EOLot eo = (EOLot) result;
+					lotsCollection.addElement(eo.lotName);
 				}
-			}
-			// ... and commit the transaction.
-				txn.commit();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-//		}
-		return lotsCollection;
-
-	}
-
-	public DefaultListModel<String> getHighestBidForItem(){
-		DefaultListModel<String> lotsCollection = new DefaultListModel<String>();
-
-		try {
-			Transaction.Created trc = null;
-
-			try {
-				trc = TransactionFactory.create(mgr, THREE_SECONDS);
 			} catch (Exception e) {
-				System.out.println("Could not create transaction " + e);
+				e.printStackTrace();
+
 			}
 
-			Transaction txn = trc.transaction;
-			int counter = 0;
-			while(true) {
-				try {
-					EOLot EOLotItem = new EOLot();
-					EOLot lots = (EOLot) space.takeIfExists(EOLotItem, txn, ONE_SECOND);
-					if (lots == null) {
-						txn.abort();
-						break;
-					} else {
-						System.out.println(lots.lotName);
-						lotsCollection.addElement(lots.lotName);
-					}
-//					space.write(lots, txn, TWO_SECONDS);
-				} catch (Exception e) {
-					e.printStackTrace();
-					txn.abort();
-					break;
-				}
-			}
-			// ... and commit the transaction.
-//				txn.commit();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-//		}
 		return lotsCollection;
-
 	}
-
-	public DefaultListModel<String>  getBidByUser(){
-		DefaultListModel<String> lotsCollection = new DefaultListModel<String>();
-
-		try {
-			Transaction.Created trc = null;
-
-			try {
-				trc = TransactionFactory.create(mgr, THREE_SECONDS);
-			} catch (Exception e) {
-				System.out.println("Could not create transaction " + e);
-			}
-
-			Transaction txn = trc.transaction;
-			int counter = 0;
-			while(true) {
-				try {
-					EOLot EOLotItem = new EOLot();
-					EOLot lots = (EOLot) space.takeIfExists(EOLotItem, txn, ONE_SECOND);
-					if (lots == null) {
-						txn.abort();
-						break;
-					} else {
-						System.out.println(lots.lotName);
-						lotsCollection.addElement(lots.lotName);
-					}
-//					space.write(lots, txn, TWO_SECONDS);
-				} catch (Exception e) {
-					e.printStackTrace();
-					txn.abort();
-					break;
-				}
-			}
-			// ... and commit the transaction.
-//				txn.commit();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-//		}
-		return lotsCollection;
-
-	}
-
 	/**
 	 * isNumeric : Check if inputs are numbers
 	 * @param str

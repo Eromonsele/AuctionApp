@@ -51,7 +51,7 @@
               <component id="5acb0" class="javax.swing.JLabel">
                 <constraints border-constraint="North"/>
                 <properties>
-                  <text value="EOKUser Name"/>
+                  <text value="EOUser Name"/>
                 </properties>
               </component>
               <component id="d3b3d" class="javax.swing.JTextField" binding="userTxtField">

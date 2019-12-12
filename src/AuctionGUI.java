@@ -27,7 +27,7 @@ public class AuctionGUI {
     private JLabel welcomeMessage;
     private JTabbedPane tabbedPane1;
     private JButton logOutButton;
-    private JList featuredList;
+    private JList <String> featuredList;
     private JButton addItemsButton;
     private JScrollPane scrollPane1;
     private JButton addItemBtn;
@@ -52,6 +52,7 @@ public class AuctionGUI {
             UserPanel.setVisible(true);
         }
 
+        sessionManager.getAllLots();
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -139,13 +140,12 @@ public class AuctionGUI {
                 addItemForm.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-
+                        sessionManager.getAllLots();
                     }
                 });
             }
         });
 
-        new PopulateTableNotify(featuredList);
 
     }
 
