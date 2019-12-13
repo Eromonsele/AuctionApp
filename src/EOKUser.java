@@ -10,9 +10,9 @@ public class EOKUser implements Entry {
     public String password;
     public String emailAddress;
     public String userId;
-//    public Boolean loggedIn;
-//    public ArrayList<EOLot> lots;
-//    public ArrayList<Bid> bids;
+    public Boolean loggedIn;
+    public ArrayList<Lot> lots;
+    public ArrayList<Bid> bids;
 
     public EOKUser() {
 

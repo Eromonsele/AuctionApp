@@ -41,6 +41,11 @@ public class AuctionGUI {
     private JPanel itemActionsField;
     private JScrollPane descScrollPane;
     private JLabel highestBidValueField;
+    private JLabel itemOwnerLabel;
+    private JLabel startingBidValueLabel;
+    private JLabel buyOutValueLabel;
+    private JPanel itemOwnerWrapper;
+    private JPanel priceWrapper;
     private JButton addItemBtn;
     private JPanel lotListPanel;
     private SessionManager sessionManager;
@@ -162,15 +167,22 @@ public class AuctionGUI {
         featuredList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
-                lotNamelabel.setText(featuredList.getSelectedValue().lotName);
-                lotNamelabel.setVisible(true);
-                descLabel.setVisible(true);
-                descScrollPane.setVisible(true);
-                itemActionsField.setVisible(true);
-                descTextAreaField.setVisible(true);
-                descTextAreaField.setText(null);
-                descTextAreaField.setText(featuredList.getSelectedValue().lotDescription);
-
+                if (featuredList.getSelectedValue() != null){
+                    lotNamelabel.setText(featuredList.getSelectedValue().lotName);
+                    priceWrapper.setVisible(true);
+                    itemOwnerWrapper.setVisible(true);
+                    highestBidValueField.setText(sessionManager.getLatestBid(featuredList.getSelectedValue()));
+                    itemOwnerLabel.setText("Owner:" + featuredList.getSelectedValue().lotOwner.toString());
+                    buyOutValueLabel.setText("£"+featuredList.getSelectedValue().lotBuyOutPrice.toString());
+                    startingBidValueLabel.setText("£"+featuredList.getSelectedValue().lotStartPrice.toString());
+                    lotNamelabel.setVisible(true);
+                    descLabel.setVisible(true);
+                    descScrollPane.setVisible(true);
+                    itemActionsField.setVisible(true);
+                    descTextAreaField.setVisible(true);
+                    descTextAreaField.setText(null);
+                    descTextAreaField.setText(featuredList.getSelectedValue().lotDescription);
+                }
             }
         });
         bidButton.addActionListener(new ActionListener() {
@@ -261,6 +273,7 @@ public class AuctionGUI {
     public void updateList(){
 
     }
+
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame frame = new JFrame("Auction Application");

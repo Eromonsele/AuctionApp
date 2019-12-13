@@ -66,9 +66,9 @@ public class SessionManager {
 						EOKUserReg.firstName = userInfo.get("firstName");
 						EOKUserReg.secondName = userInfo.get("secondName");
 						EOKUserReg.emailAddress = userInfo.get("email");
-//						EOKUserReg.bids = new ArrayList<Bid>();
-//						EOKUserReg.lots = new ArrayList<EOLot>();
-//						EOKUserReg.loggedIn = false;
+						EOKUserReg.bids = new ArrayList<Bid>();
+						EOKUserReg.lots = new ArrayList<Lot>();
+						EOKUserReg.loggedIn = false;
 						space.write(EOKUserReg,null, Lease.FOREVER);
 						return true;
 					}
@@ -99,7 +99,7 @@ public class SessionManager {
 				EOKUser EOKUserLogin = (EOKUser) space.readIfExists(EOKUserTemplate, null, TWO_SECONDS);
 
 				if (EOKUserLogin != null) {
-//                     EOKUserLogin.loggedIn = true;
+					EOKUserLogin.loggedIn = true;
 					sessionUser = EOKUserLogin;
 					return true;
 				}
@@ -141,8 +141,8 @@ public class SessionManager {
 
 			try{
 				// take user out
-//				EOKUser template = new EOKUser(sessionUser.userId);
-//				EOKUser EOKUser = (EOKUser) space.takeIfExists(template, txn, THREE_SECONDS);
+				EOKUser template = new EOKUser(sessionUser.userId);
+				EOKUser EOKUser = (EOKUser) space.takeIfExists(template, txn, THREE_SECONDS);
 
 				// get Item Count in the space
 
@@ -152,24 +152,20 @@ public class SessionManager {
 				LotItem.lotBuyOutPrice = lotBuyOutPrice;
 				LotItem.lotStartPrice = lotStartPrice;
 				LotItem.sold = false;
-//				EOLotItem.bids = new ArrayList<Bid>();
+				LotItem.bids = new ArrayList<Bid>();
 
-				// if user exist
-//				if (EOKUser != null){
-////					EOKUser.lots.add(EOLotItem);
-//					//write the count to the space
-//
-//
-//					//write user back into the space
-//					space.write(EOKUser, txn, Lease.FOREVER);
-//
-//				}
+//				 if user exist
+				if (EOKUser != null){
+					EOKUser.lots.add(LotItem);
+					//write the count to the space
 
-				//write the item to space
-				space.write(LotItem,txn, Lease.FOREVER);
+					//write user back into the space
+					space.write(EOKUser, txn, Lease.FOREVER);
 
+					//write the item to space
+					space.write(LotItem,txn, Lease.FOREVER);
 
-
+				}
 
 			}catch (Exception e){
 				System.out.println("Failed to read or write to space " + e);
@@ -247,13 +243,46 @@ public class SessionManager {
 	}
 
 	public boolean setBid(Float bidPrice, Lot LotItem){
-		Bid template = new Bid(LotItem,bidPrice);
-		try {
-			space.write(template,null, TWO_SECONDS);
+		try{
+
+			Transaction.Created trc = null;
+
+			try {
+				trc = TransactionFactory.create(mgr, THREE_SECONDS);
+			} catch (Exception e){
+				System.out.println("Could not create transaction " + e);
+			}
+
+			Transaction addBids = trc.transaction;
+
+			try{
+				// take user out
+				EOKUser template = new EOKUser(sessionUser.userId);
+				EOKUser EOKUser = (EOKUser) space.takeIfExists(template, addBids, THREE_SECONDS);
+
+				Bid bidTemplate = new Bid(LotItem,bidPrice);
+				try {
+					EOKUser.bids.add(bidTemplate);
+
+					space.write(bidTemplate,addBids, TWO_SECONDS);
+					return true;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}catch (Exception e){
+				System.out.println("Failed to read or write to space " + e);
+				addBids.abort();
+				return false;
+			}
+
+			// ... and commit the transaction.
+			addBids.commit();
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.print("Transaction failed " + e);
 		}
+
 		return false;
 	}
 

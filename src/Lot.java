@@ -10,7 +10,7 @@ public class Lot implements Entry {
     public Float lotBuyOutPrice;
     public EOKUser lotOwner;
     public Boolean sold;
-//    public ArrayList<Bid> bids;
+    public ArrayList<Bid> bids;
 
 
     public Lot(){

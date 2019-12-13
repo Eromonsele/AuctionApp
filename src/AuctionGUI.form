@@ -532,7 +532,7 @@
                       </component>
                     </children>
                   </scrollpane>
-                  <grid id="7d3f7" binding="itemInfoPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="7d3f7" binding="itemInfoPanel" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -564,7 +564,7 @@
                       </grid>
                       <vspacer id="26591">
                         <constraints>
-                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                         </constraints>
                       </vspacer>
                       <grid id="67253" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -609,7 +609,7 @@
                       <grid id="26b5c" binding="itemActionsField" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                             <minimum-size width="-1" height="30"/>
                             <preferred-size width="-1" height="30"/>
                           </grid>
@@ -637,12 +637,14 @@
                           </component>
                         </children>
                       </grid>
-                      <grid id="1758d" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="1758d" binding="priceWrapper" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <visible value="false"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="c432f" class="javax.swing.JLabel">
@@ -693,7 +695,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="c1409" class="javax.swing.JLabel">
+                              <component id="c1409" class="javax.swing.JLabel" binding="startingBidValueLabel">
                                 <constraints border-constraint="South"/>
                                 <properties>
                                   <horizontalAlignment value="4"/>
@@ -709,7 +711,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="3fe74" class="javax.swing.JLabel">
+                              <component id="3fe74" class="javax.swing.JLabel" binding="buyOutValueLabel">
                                 <constraints border-constraint="Center"/>
                                 <properties>
                                   <horizontalAlignment value="4"/>
@@ -718,6 +720,24 @@
                               </component>
                             </children>
                           </grid>
+                        </children>
+                      </grid>
+                      <grid id="ad8ce" binding="itemOwnerWrapper" layout-manager="BorderLayout" hgap="0" vgap="0">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <visible value="false"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <component id="f715b" class="javax.swing.JLabel" binding="itemOwnerLabel">
+                            <constraints border-constraint="Center"/>
+                            <properties>
+                              <horizontalAlignment value="0"/>
+                              <text value="Label"/>
+                            </properties>
+                          </component>
                         </children>
                       </grid>
                     </children>
