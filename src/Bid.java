@@ -1,15 +1,16 @@
 import net.jini.core.entry.Entry;
 
 public class Bid implements Entry {
-    public Lot LotItem;
+    public EO2Lot EO2LotItem;
     public Float bidValue;
+    public EOK3User bidder;
 
     public Bid() {
 
     }
 
-    public Bid(Lot item, float bValue){
-        LotItem = item;
+    public Bid(EO2Lot item, float bValue){
+        EO2LotItem = item;
         bidValue = bValue;
     }
 

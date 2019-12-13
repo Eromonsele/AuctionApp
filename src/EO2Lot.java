@@ -2,25 +2,25 @@ import net.jini.core.entry.Entry;
 
 import java.util.ArrayList;
 
-public class Lot implements Entry {
+public class EO2Lot implements Entry {
 
     public String lotName;
     public String lotDescription;
     public Float lotStartPrice;
     public Float lotBuyOutPrice;
-    public EOKUser lotOwner;
+    public EOK3User lotOwner;
     public Boolean sold;
     public ArrayList<Bid> bids;
 
 
-    public Lot(){
+    public EO2Lot(){
 
     }
-    public Lot(EOKUser owner){
+    public EO2Lot(EOK3User owner){
         lotOwner = owner;
     }
 
-    public Lot(EOKUser owner, String lName){
+    public EO2Lot(EOK3User owner, String lName){
         lotOwner = owner;
         lotName = lName;
     }

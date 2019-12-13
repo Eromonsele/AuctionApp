@@ -1,9 +1,8 @@
 import net.jini.core.entry.*;
 
 import java.util.ArrayList;
-import java.util.Map;
 
-public class EOKUser implements Entry {
+public class EOK3User implements Entry {
 
     public String firstName;
     public String secondName;
@@ -11,18 +10,18 @@ public class EOKUser implements Entry {
     public String emailAddress;
     public String userId;
     public Boolean loggedIn;
-    public ArrayList<Lot> lots;
+    public ArrayList<EO2Lot> EO2Lots;
     public ArrayList<Bid> bids;
 
-    public EOKUser() {
+    public EOK3User() {
 
     }
 
-    public EOKUser(String usrId){
+    public EOK3User(String usrId){
         userId = usrId;
     }
 
-    public EOKUser(String usrId, String pswd) {
+    public EOK3User(String usrId, String pswd) {
         userId = usrId;
         password = pswd;
     }

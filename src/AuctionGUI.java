@@ -1,13 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.basic.BasicLookAndFeel;
 
 public class AuctionGUI {
     private JPanel WindowsPanel;
@@ -29,7 +26,7 @@ public class AuctionGUI {
     private JLabel welcomeMessage;
     private JTabbedPane tabbedPane1;
     private JButton logOutButton;
-    private JList <Lot> featuredList;
+    private JList <EO2Lot> featuredList;
     private JButton addItemsButton;
     private JScrollPane featuredListscrollPane;
     private JPanel itemInfoPanel;
@@ -193,7 +190,7 @@ public class AuctionGUI {
                     if (sessionManager.setBid(Float.parseFloat(bidValue),featuredList.getSelectedValue())){
                         JOptionPane.showMessageDialog(UserPanel, "Successful Bid");
                     }else{
-                        JOptionPane.showMessageDialog(UserPanel, "Error!!");
+                        JOptionPane.showMessageDialog(UserPanel, "Your Bid was rejected, please check your bid!!");
                     }
                 }else{
                     JOptionPane.showMessageDialog(UserPanel, "Please put in a number");
