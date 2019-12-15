@@ -6,9 +6,9 @@ public class EO2Lot implements Entry {
 
     public String lotName;
     public String lotDescription;
-    public Float lotStartPrice;
-    public Float lotBuyOutPrice;
-    public EOK3User lotOwner;
+    public Double lotStartPrice;
+    public Double lotBuyOutPrice;
+    public EOKUser lotOwner;
     public Boolean sold;
     public ArrayList<Bid> bids;
 
@@ -16,11 +16,11 @@ public class EO2Lot implements Entry {
     public EO2Lot(){
 
     }
-    public EO2Lot(EOK3User owner){
+    public EO2Lot(EOKUser owner){
         lotOwner = owner;
     }
 
-    public EO2Lot(EOK3User owner, String lName){
+    public EO2Lot(EOKUser owner, String lName){
         lotOwner = owner;
         lotName = lName;
     }
@@ -29,4 +29,6 @@ public class EO2Lot implements Entry {
     public String toString() {
         return lotName;
     }
+
+
 }

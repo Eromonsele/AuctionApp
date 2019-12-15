@@ -43,6 +43,10 @@ public class AuctionGUI {
     private JLabel buyOutValueLabel;
     private JPanel itemOwnerWrapper;
     private JPanel priceWrapper;
+    private JList myItemsList;
+    private JButton refreshButton;
+    private JButton removeBtn;
+    private JTextArea notificationTxtArea;
     private JButton addItemBtn;
     private JPanel lotListPanel;
     private SessionManager sessionManager;
@@ -55,17 +59,6 @@ public class AuctionGUI {
         LoginPanel.setVisible(true);
         RegisterPanel.setVisible(false);
         UserPanel.setVisible(false);
-
-        sessionManager= new SessionManager();
-        sessionManager.preLoad();
-        if (sessionManager.loginUser("admin","root")){
-            welcomeMessage.setText("Welcome " + sessionManager.sessionUser.firstName);
-            LoginPanel.setVisible(false);
-            RegisterPanel.setVisible(false);
-            UserPanel.setVisible(true);
-        }
-
-
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -82,6 +75,15 @@ public class AuctionGUI {
                 LoginPanel.setVisible(false);
                 RegisterPanel.setVisible(false);
                 UserPanel.setVisible(true);
+
+                featuredList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                featuredList.setLayoutOrientation(JList.VERTICAL);
+                featuredList.setVisibleRowCount(-1);
+                featuredList.setModel(sessionManager.getAllLots());
+                myItemsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                myItemsList.setLayoutOrientation(JList.VERTICAL);
+                myItemsList.setVisibleRowCount(-1);
+//                myItemsList.setModel(sessionManager.getLotsByUser());
             }
         });
 
@@ -133,15 +135,13 @@ public class AuctionGUI {
                     }
                     JOptionPane.showMessageDialog(RegisterPanel, sessionManager.errorMessage);
                     return;
+                }else{
+                    LoginPanel.setVisible(true);
+                    RegisterPanel.setVisible(false);
+                    UserPanel.setVisible(false);
                 }
             }
         });
-
-        featuredList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        featuredList.setLayoutOrientation(JList.VERTICAL);
-        featuredList.setVisibleRowCount(-1);
-        featuredList.setModel(sessionManager.getAllLots());
-//        featuredList.set
 
         addItemsButton.addActionListener(new ActionListener() {
             @Override
@@ -155,20 +155,29 @@ public class AuctionGUI {
                     @Override
                     public void windowClosed(WindowEvent e) {
                         featuredList.setModel(sessionManager.getAllLots());
+//                        myItemsList.setModel(sessionManager.getLotsByUser());
                     }
                 });
             }
         });
-
 
         featuredList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 if (featuredList.getSelectedValue() != null){
                     lotNamelabel.setText(featuredList.getSelectedValue().lotName);
+                    if (sessionManager.sessionUser.equals(featuredList.getSelectedValue().lotOwner)){
+                        bidButton.setVisible(false);
+                        buyOutButton.setVisible(false);
+                        removeBtn.setVisible(true);
+                    }else{
+                        bidButton.setVisible(true);
+                        buyOutButton.setVisible(true);
+                        removeBtn.setVisible(false);
+                    }
                     priceWrapper.setVisible(true);
                     itemOwnerWrapper.setVisible(true);
-                    highestBidValueField.setText(sessionManager.getLatestBid(featuredList.getSelectedValue()));
+                    highestBidValueField.setText(sessionManager.getHighestBid(featuredList.getSelectedValue()));
                     itemOwnerLabel.setText("Owner:" + featuredList.getSelectedValue().lotOwner.toString());
                     buyOutValueLabel.setText("£"+featuredList.getSelectedValue().lotBuyOutPrice.toString());
                     startingBidValueLabel.setText("£"+featuredList.getSelectedValue().lotStartPrice.toString());
@@ -182,26 +191,62 @@ public class AuctionGUI {
                 }
             }
         });
+
         bidButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if (sessionManager.sessionUser.equals(featuredList.getSelectedValue().lotOwner)){
+                    JOptionPane.showMessageDialog(UserPanel, "You can't bid on your own item");
+                    return;
+                }
+
                 String bidValue = JOptionPane.showInputDialog(UserPanel,"What is your bid?");
                 if(sessionManager.isNumeric(bidValue)){
-                    if (sessionManager.setBid(Float.parseFloat(bidValue),featuredList.getSelectedValue())){
+                    Double highestBid =  featuredList.getSelectedValue().lotStartPrice;
+                    if (featuredList.getSelectedValue().bids.size() > 0){
+                        highestBid = featuredList.getSelectedValue().bids.get(featuredList.getSelectedValue().bids.size() - 1).bidValue;
+                    }
+
+                    if (sessionManager.setBid(Double.parseDouble(bidValue),featuredList.getSelectedValue(), highestBid)){
                         JOptionPane.showMessageDialog(UserPanel, "Successful Bid");
                     }else{
-                        JOptionPane.showMessageDialog(UserPanel, "Your Bid was rejected, please check your bid!!");
+                        JOptionPane.showMessageDialog(UserPanel, sessionManager.errorMessage);
                     }
                 }else{
                     JOptionPane.showMessageDialog(UserPanel, "Please put in a number");
                 }
-
+                resetFeaturedWindow();
+                featuredList.setModel(sessionManager.getAllLots());
             }
         });
+
         buyOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if (sessionManager.buyOutItem(featuredList.getSelectedValue())){
+                    JOptionPane.showMessageDialog(UserPanel, "Purchase Successful");
+                    resetFeaturedWindow();
+                    featuredList.setModel(sessionManager.getAllLots());
+                }else{
+                    JOptionPane.showMessageDialog(UserPanel, "Error");
+                }
+            }
+        });
 
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetFeaturedWindow();
+                featuredList.setModel(sessionManager.getAllLots());
+            }
+        });
+
+        removeBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sessionManager.removeItem(featuredList.getSelectedValue());
+                resetFeaturedWindow();
+                featuredList.setModel(sessionManager.getAllLots());
             }
         });
     }
@@ -254,8 +299,7 @@ public class AuctionGUI {
      * @param  email an email address
      * @return Boolean
      */
-    public boolean isValid(String email)
-    {
+    public boolean isValid(String email){
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
                 "[a-zA-Z0-9_+&*-]+)*@" +
                 "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
@@ -267,19 +311,22 @@ public class AuctionGUI {
         return pat.matcher(email).matches();
     }
 
-    public void updateList(){
-
+    /**
+     * resetFeaturedWindow:
+     */
+    private void resetFeaturedWindow(){
+        priceWrapper.setVisible(false);
+        itemOwnerWrapper.setVisible(false);
+        lotNamelabel.setVisible(false);
+        descLabel.setVisible(false);
+        descScrollPane.setVisible(false);
+        itemActionsField.setVisible(false);
+        descTextAreaField.setVisible(false);
     }
 
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame frame = new JFrame("Auction Application");
-//        try {
-//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        };
-
         frame.setResizable(false);
 
         Dimension size = new Dimension();

@@ -507,7 +507,7 @@
                         <properties>
                           <maximumSize width="-1" height="-1"/>
                           <minimumSize width="-1" height="-1"/>
-                          <opaque value="false"/>
+                          <opaque value="true"/>
                           <preferredSize width="200" height="-1"/>
                           <requestFocusEnabled value="false"/>
                           <selectedIndex value="-1"/>
@@ -519,7 +519,7 @@
                       </component>
                     </children>
                   </scrollpane>
-                  <grid id="7d3f7" binding="itemInfoPanel" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="7d3f7" binding="itemInfoPanel" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -593,7 +593,7 @@
                           </scrollpane>
                         </children>
                       </grid>
-                      <grid id="26b5c" binding="itemActionsField" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="26b5c" binding="itemActionsField" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
                           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -620,6 +620,14 @@
                             </constraints>
                             <properties>
                               <text value="Buy Out"/>
+                            </properties>
+                          </component>
+                          <component id="bc360" class="javax.swing.JButton" binding="removeBtn">
+                            <constraints>
+                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Remove"/>
                             </properties>
                           </component>
                         </children>
@@ -727,6 +735,14 @@
                           </component>
                         </children>
                       </grid>
+                      <component id="1d23d" class="javax.swing.JButton" binding="refreshButton">
+                        <constraints>
+                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Refresh"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                 </children>
@@ -739,15 +755,42 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="5eec4" class="javax.swing.JButton" binding="addItemsButton" default-binding="true">
+                  <grid id="e49b6" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                        <minimum-size width="800" height="-1"/>
+                        <preferred-size width="800" height="-1"/>
+                        <maximum-size width="800" height="-1"/>
+                      </grid>
                     </constraints>
-                    <properties>
-                      <text value="Add Items"/>
-                    </properties>
-                  </component>
-                  <vspacer id="cb5f6">
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <scrollpane id="ab9a7">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="cefcd" class="javax.swing.JList" binding="myItemsList">
+                            <constraints/>
+                            <properties/>
+                          </component>
+                        </children>
+                      </scrollpane>
+                      <component id="b96cf" class="javax.swing.JButton" binding="addItemsButton">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Add Item"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <vspacer id="bb79">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -762,6 +805,35 @@
                 <properties/>
                 <border type="none"/>
                 <children/>
+              </grid>
+              <grid id="74333" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="10" left="10" bottom="10" right="10"/>
+                <constraints>
+                  <tabbedpane title="Notifications (0)"/>
+                </constraints>
+                <properties>
+                  <font name="Courier New" size="14"/>
+                  <foreground color="-37376"/>
+                  <opaque value="false"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <scrollpane id="5a362">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="e0da3" class="javax.swing.JTextArea" binding="notificationTxtArea">
+                        <constraints/>
+                        <properties>
+                          <editable value="false"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </scrollpane>
+                </children>
               </grid>
             </children>
           </tabbedpane>
