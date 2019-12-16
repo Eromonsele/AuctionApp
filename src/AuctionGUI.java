@@ -47,6 +47,9 @@ public class AuctionGUI {
     private JButton refreshButton;
     private JButton removeBtn;
     private JTextArea notificationTxtArea;
+	private JButton viewBidsButton;
+    private JButton acceptBidButton;
+    private JPanel adminButtonPanel;
     private JButton addItemBtn;
     private JPanel lotListPanel;
     private SessionManager sessionManager;
@@ -166,14 +169,24 @@ public class AuctionGUI {
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 if (featuredList.getSelectedValue() != null){
                     lotNamelabel.setText(featuredList.getSelectedValue().lotName);
+                    adminButtonPanel.setVisible(true);
                     if (sessionManager.sessionUser.equals(featuredList.getSelectedValue().lotOwner)){
                         bidButton.setVisible(false);
                         buyOutButton.setVisible(false);
                         removeBtn.setVisible(true);
+                        acceptBidButton.setVisible(true);
                     }else{
                         bidButton.setVisible(true);
                         buyOutButton.setVisible(true);
                         removeBtn.setVisible(false);
+                        acceptBidButton.setVisible(false);
+                    }
+                    if (featuredList.getSelectedValue().bids.size() > 0){
+                        acceptBidButton.setEnabled(true);
+                        viewBidsButton.setEnabled(true);
+                    }else{
+                        acceptBidButton.setEnabled(false);
+                        viewBidsButton.setEnabled(false);
                     }
                     priceWrapper.setVisible(true);
                     itemOwnerWrapper.setVisible(true);
@@ -249,6 +262,21 @@ public class AuctionGUI {
                 featuredList.setModel(sessionManager.getAllLots());
             }
         });
+        acceptBidButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        viewBidsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ViewBidsForm viewBidsForm = new ViewBidsForm(featuredList.getSelectedValue());
+                viewBidsForm.setLocationByPlatform(false);
+                viewBidsForm.setLocationRelativeTo(WindowsPanel);
+                viewBidsForm.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -315,6 +343,7 @@ public class AuctionGUI {
      * resetFeaturedWindow:
      */
     private void resetFeaturedWindow(){
+        adminButtonPanel.setVisible(false);
         priceWrapper.setVisible(false);
         itemOwnerWrapper.setVisible(false);
         lotNamelabel.setVisible(false);

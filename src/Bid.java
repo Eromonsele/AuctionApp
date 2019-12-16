@@ -17,6 +17,6 @@ public class Bid implements Entry {
 
     @Override
     public String toString() {
-        return bidValue.toString();
+        return "Bidder: " + bidder + "\nBid Value: £" + bidValue.toString() + "\n\n";
     }
 }

@@ -5,7 +5,9 @@ import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.space.JavaSpace05;
 
+import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
+import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -351,4 +353,10 @@ public class SessionManager {
 
 		registerUser(preInfo);
 	}
+
+//	public String hashingPassword(){
+//		byte[] salt = new byte[16];
+//		random.nextBytes(salt);
+//		KeySpec spec = new PBEKeySpec()
+//	}
 }
