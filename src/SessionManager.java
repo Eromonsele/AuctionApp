@@ -6,6 +6,7 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.space.JavaSpace05;
+import net.jini.space.MatchSet;
 
 import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
@@ -24,7 +25,6 @@ public class SessionManager {
 	private static int THREE_SECONDS = 3000;  // 3000 milliseconds
 	private final static int FIVE_SECONDS = 1000 * 5; // that's 5000 Milliseconds
 	private final static int NUMBER_OF_OBJECTS_TO_RETURN = 100;
-
 
 	private JavaSpace05 space;
 	private TransactionManager mgr;
@@ -271,12 +271,11 @@ public class SessionManager {
 		templates.add(template);
 			try {
 
-				Collection<EO2Lot> EO2Lots = space.take(templates, null, FIVE_SECONDS, NUMBER_OF_OBJECTS_TO_RETURN);
-
-				for (Object result : EO2Lots) {
-					EO2Lot eo = (EO2Lot) result;
-					lotsCollection.addElement(eo);
-					space.write(eo,null,Lease.FOREVER);
+				MatchSet results = space.contents(templates, null, FIVE_SECONDS, NUMBER_OF_OBJECTS_TO_RETURN);
+				EO2Lot result = (EO2Lot)results.next();
+				while (result != null){
+					lotsCollection.addElement(result);
+					result = (EO2Lot) results.next();
 				}
 
 			} catch (Exception e) {
@@ -314,8 +313,11 @@ public class SessionManager {
 	 */
 	public boolean buyOutItem(EO2Lot lotItem){
 		try {
-			EO2Lot lot = (EO2Lot) space.takeIfExists(lotItem,null,ONE_SECOND);
+			EO2Lot template = new EO2Lot(lotItem.lotOwner, lotItem.lotName);
+			EO2Lot lot = (EO2Lot) space.takeIfExists(template,null,ONE_SECOND);
 			if (lot != null){
+				lot.sold = true;
+				space.write(lot,null,Lease.FOREVER);
 				return true;
 			}
 		} catch (Exception e) {
@@ -399,7 +401,7 @@ public class SessionManager {
 	 *	logOut
 	 * @return Boolean
 	 */
-	public Boolean logOut(){
+	public boolean logOut(){
 		EOKUser template = new EOKUser(sessionUser.userId);
 		try {
 			EOKUser user = (EOKUser) space.take(template,null,TWO_MINUTES);

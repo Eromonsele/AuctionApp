@@ -4,6 +4,7 @@ public class Bid implements Entry {
     public EO2Lot EO2LotItem;
     public Double bidValue;
     public EOKUser bidder;
+    //public String bidDate;
 
     public Bid() {
 
@@ -14,7 +15,7 @@ public class Bid implements Entry {
         bidValue = bValue;
         bidder = owner;
     }
-
+    //add bid Date
     @Override
     public String toString() {
         return "Bidder: " + bidder + "\nBid Value: £" + bidValue.toString() + "\n\n";

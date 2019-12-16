@@ -69,6 +69,8 @@ public class AuctionGUI {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 sessionManager = new SessionManager();
+
+
                 Boolean result = sessionManager.loginUser(userTxtField.getText(),passTxtField.getText());
                 if (result == false){
                   JOptionPane.showMessageDialog(LoginPanel,"Login not working");
@@ -89,6 +91,10 @@ public class AuctionGUI {
                 activeLotsList.setLayoutOrientation(JList.VERTICAL);
                 activeLotsList.setVisibleRowCount(-1);
                 activeLotsList.setModel(sessionManager.getActiveLots());
+
+                new BuyOutNotification(featuredList);
+
+
             }
         });
 
@@ -170,6 +176,11 @@ public class AuctionGUI {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 if (featuredList.getSelectedValue() != null){
+                    if (featuredList.getSelectedValue().sold){
+                        JOptionPane.showMessageDialog(UserPanel,"This Item has been Purchased");
+                        return;
+                    }
+
                     lotNamelabel.setText(featuredList.getSelectedValue().lotName);
                     adminButtonPanel.setVisible(true);
                     if (sessionManager.sessionUser.equals(featuredList.getSelectedValue().lotOwner)){
@@ -241,7 +252,7 @@ public class AuctionGUI {
                 if (sessionManager.buyOutItem(featuredList.getSelectedValue())){
                     JOptionPane.showMessageDialog(UserPanel, "Purchase Successful");
                     resetFeaturedWindow();
-                    refreshInformation();
+//                    refreshInformation();
                 }else{
                     JOptionPane.showMessageDialog(UserPanel, "Error");
                 }
@@ -292,6 +303,8 @@ public class AuctionGUI {
                 }
             }
         });
+
+
     }
 
     /**
