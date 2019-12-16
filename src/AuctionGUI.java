@@ -85,10 +85,10 @@ public class AuctionGUI {
                 featuredList.setLayoutOrientation(JList.VERTICAL);
                 featuredList.setVisibleRowCount(-1);
                 featuredList.setModel(sessionManager.getAllLots());
-                myItemsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-                myItemsList.setLayoutOrientation(JList.VERTICAL);
-                myItemsList.setVisibleRowCount(-1);
-//                myItemsList.setModel(sessionManager.getLotsByUser());
+                activeLotsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                activeLotsList.setLayoutOrientation(JList.VERTICAL);
+                activeLotsList.setVisibleRowCount(-1);
+                activeLotsList.setModel(sessionManager.getActiveLots());
             }
         });
 
@@ -159,7 +159,7 @@ public class AuctionGUI {
                 addItemForm.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        featuredList.setModel(sessionManager.getAllLots());
+                        refreshInformation();
 //                        myItemsList.setModel(sessionManager.getLotsByUser());
                     }
                 });
@@ -231,7 +231,7 @@ public class AuctionGUI {
                     JOptionPane.showMessageDialog(UserPanel, "Please put in a number");
                 }
                 resetFeaturedWindow();
-                featuredList.setModel(sessionManager.getAllLots());
+                refreshInformation();
             }
         });
 
@@ -241,7 +241,7 @@ public class AuctionGUI {
                 if (sessionManager.buyOutItem(featuredList.getSelectedValue())){
                     JOptionPane.showMessageDialog(UserPanel, "Purchase Successful");
                     resetFeaturedWindow();
-                    featuredList.setModel(sessionManager.getAllLots());
+                    refreshInformation();
                 }else{
                     JOptionPane.showMessageDialog(UserPanel, "Error");
                 }
@@ -252,7 +252,7 @@ public class AuctionGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 resetFeaturedWindow();
-                featuredList.setModel(sessionManager.getAllLots());
+                refreshInformation();
             }
         });
 
@@ -261,7 +261,7 @@ public class AuctionGUI {
             public void actionPerformed(ActionEvent e) {
                 sessionManager.removeItem(featuredList.getSelectedValue());
                 resetFeaturedWindow();
-                featuredList.setModel(sessionManager.getAllLots());
+                refreshInformation();
             }
         });
         acceptBidButton.addActionListener(new ActionListener() {
@@ -300,6 +300,12 @@ public class AuctionGUI {
      * @return String Error message if error occurs
      *
      */
+
+    public void refreshInformation(){
+        featuredList.setModel(sessionManager.getAllLots());
+        activeLotsList.setModel(sessionManager.getActiveLots());
+    }
+
     private String checkRegistrationForm(){
         if(firstNameTxtField.getText().isEmpty()){
             return "First Name is blank";

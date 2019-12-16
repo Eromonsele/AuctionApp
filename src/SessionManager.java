@@ -208,16 +208,21 @@ public class SessionManager {
 			Transaction addBids = setTrc.transaction;
 
 			try{
+				EOKUser usertemplate = new EOKUser(sessionUser.userId);
+				EOKUser user = (EOKUser) space.take(usertemplate,addBids,TWO_MINUTES);
+
 				EO2Lot template = new EO2Lot(lotItem.lotOwner,lotItem.lotName);
 				EO2Lot lot = (EO2Lot) space.takeIfExists(template,addBids,TWO_MINUTES);
 
-				if (lot != null){
+				if (lot != null && user != null){
 					int returnValue = Double.compare(highestBid,bidPrice);
 					if (returnValue < 0){
 						Bid bid = new Bid(lot,bidPrice,sessionUser);
 						lot.bids.add(bid);
+						user.bids.add(bid);
 						space.write(bid,addBids,Lease.FOREVER);
 						space.write(lot,addBids,Lease.FOREVER);
+						space.write(user,addBids,Lease.FOREVER);
 					}else if (returnValue > 0){
 						errorMessage = "Error!! Bid price is less than highest bid " + lot.bids.get(lot.bids.size() - 1).bidValue;
 						throw new Exception();
@@ -371,17 +376,24 @@ public class SessionManager {
 		registerUser(preInfo);
 	}
 
-	public DefaultListModel<EO2Lot> getActiveLots(EO2Lot eo2Lot){
+	public DefaultListModel<EO2Lot> getActiveLots(){
 		DefaultListModel<EO2Lot> temp = new DefaultListModel<EO2Lot>();
+		EOKUser template = new EOKUser(sessionUser.userId);
+		try {
+			EOKUser user = (EOKUser) space.take(template, null, TWO_MINUTES);
 
+			if (user != null){
+				for (int i = 0; i < user.lots.size(); i++) {
+					temp.addElement(user.lots.get(i));
+				}
+				space.write(user,null,Lease.FOREVER);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return temp;
 	}
 
-	public DefaultListModel<Bid> getActiveBids(EO2Lot eo2Lot){
-		DefaultListModel<Bid> temp = new DefaultListModel<Bid>();
-
-		return temp;
-	}
 
 	/**
 	 *	logOut
