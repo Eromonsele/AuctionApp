@@ -1,5 +1,6 @@
 import net.jini.core.entry.*;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class EOKUser implements Entry {
@@ -10,6 +11,8 @@ public class EOKUser implements Entry {
     public String emailAddress;
     public String userId;
     public Boolean loggedIn;
+    public ArrayList<EO2Lot> lots;
+    public ArrayList<Bid> bids;
 
     public EOKUser() {
 

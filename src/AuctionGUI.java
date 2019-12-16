@@ -50,6 +50,8 @@ public class AuctionGUI {
 	private JButton viewBidsButton;
     private JButton acceptBidButton;
     private JPanel adminButtonPanel;
+    private JList activeLotsList;
+    private JPanel activeLotsWrapper;
     private JButton addItemBtn;
     private JPanel lotListPanel;
     private SessionManager sessionManager;
@@ -275,6 +277,19 @@ public class AuctionGUI {
                 viewBidsForm.setLocationByPlatform(false);
                 viewBidsForm.setLocationRelativeTo(WindowsPanel);
                 viewBidsForm.setVisible(true);
+            }
+        });
+        logOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (sessionManager.logOut()){
+                    JOptionPane.showMessageDialog(UserPanel, "Bye Bye" + sessionManager.sessionUser .toString());
+                    LoginPanel.setVisible(true);
+                    RegisterPanel.setVisible(false);
+                    UserPanel.setVisible(false);
+                }else{
+                    JOptionPane.showMessageDialog(UserPanel, "Logout not successful");
+                }
             }
         });
     }

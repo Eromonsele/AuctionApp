@@ -1,12 +1,15 @@
 import net.jini.core.entry.Entry;
+import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.space.JavaSpace05;
 
 import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
+import java.rmi.RemoteException;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,6 +71,8 @@ public class SessionManager {
 						EOKUserReg.secondName = userInfo.get("secondName");
 						EOKUserReg.emailAddress = userInfo.get("email");
 						EOKUserReg.loggedIn = false;
+						EOKUserReg.bids = new ArrayList<Bid>();
+						EOKUserReg.lots = new ArrayList<EO2Lot>();
 
 						space.write(EOKUserReg,null, Lease.FOREVER);
 						return true;
@@ -146,9 +151,10 @@ public class SessionManager {
 			Transaction txn = trc.transaction;
 
 			try{
-				// get Item Count in the space
+				EOKUser template = new EOKUser(sessionUser.userId);
+				EOKUser user = (EOKUser) space.take(template,txn,TWO_MINUTES);
 
-				//add Item
+								//add Item
 				EO2Lot EO2LotItem = new EO2Lot(sessionUser, lotInfo.get("lotName"));
 				EO2LotItem.lotDescription = lotInfo.get("lotDescription");
 				EO2LotItem.lotBuyOutPrice = lotBuyOutPrice;
@@ -156,6 +162,11 @@ public class SessionManager {
 				EO2LotItem.sold = false;
 				EO2LotItem.bids = new ArrayList<Bid>();
 
+				if (user != null){
+					user.lots.add(EO2LotItem);
+				}
+				//write user into space
+				space.write(user,txn,Lease.FOREVER);
 				//write the item to space
 				space.write(EO2LotItem,txn, Lease.FOREVER);
 
@@ -270,6 +281,11 @@ public class SessionManager {
 		return lotsCollection;
 	}
 
+	/**
+	 * removeItem:
+	 * @param lotItem
+	 * @return
+	 */
 	public boolean removeItem(EO2Lot lotItem){
 		try {
 			EO2Lot lot = (EO2Lot) space.takeIfExists(lotItem,null,ONE_SECOND);
@@ -285,6 +301,7 @@ public class SessionManager {
 
 		return false;
 	}
+
 	/**
 	 * buyOutItem:
 	 * @param lotItem
@@ -353,6 +370,40 @@ public class SessionManager {
 
 		registerUser(preInfo);
 	}
+
+	public DefaultListModel<EO2Lot> getActiveLots(EO2Lot eo2Lot){
+		DefaultListModel<EO2Lot> temp = new DefaultListModel<EO2Lot>();
+
+		return temp;
+	}
+
+	public DefaultListModel<Bid> getActiveBids(EO2Lot eo2Lot){
+		DefaultListModel<Bid> temp = new DefaultListModel<Bid>();
+
+		return temp;
+	}
+
+	/**
+	 *	logOut
+	 * @return Boolean
+	 */
+	public Boolean logOut(){
+		EOKUser template = new EOKUser(sessionUser.userId);
+		try {
+			EOKUser user = (EOKUser) space.take(template,null,TWO_MINUTES);
+
+			if (user != null){
+				user.loggedIn = false;
+				space.write(user,null,Lease.FOREVER);
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 
 //	public String hashingPassword(){
 //		byte[] salt = new byte[16];
