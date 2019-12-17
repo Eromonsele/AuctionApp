@@ -52,6 +52,7 @@ public class AuctionGUI {
     private JPanel adminButtonPanel;
     private JList activeLotsList;
     private JPanel activeLotsWrapper;
+    private JPanel notifyTab;
     private JButton addItemBtn;
     private JPanel lotListPanel;
     private SessionManager sessionManager;
@@ -86,14 +87,16 @@ public class AuctionGUI {
                 featuredList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
                 featuredList.setLayoutOrientation(JList.VERTICAL);
                 featuredList.setVisibleRowCount(-1);
-                featuredList.setModel(sessionManager.getAllLots());
+
+                // Refresh Item on Add everytime
+                new AddItemRefresh(featuredList);
+
                 activeLotsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
                 activeLotsList.setLayoutOrientation(JList.VERTICAL);
                 activeLotsList.setVisibleRowCount(-1);
                 activeLotsList.setModel(sessionManager.getActiveLots());
 
-                new BuyOutNotification(featuredList);
-
+//               new BidNotification(notificationTxtArea);
 
             }
         });
@@ -165,8 +168,7 @@ public class AuctionGUI {
                 addItemForm.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        refreshInformation();
-//                        myItemsList.setModel(sessionManager.getLotsByUser());
+                        activeLotsList.setModel(sessionManager.getActiveLots());
                     }
                 });
             }
@@ -242,7 +244,7 @@ public class AuctionGUI {
                     JOptionPane.showMessageDialog(UserPanel, "Please put in a number");
                 }
                 resetFeaturedWindow();
-                refreshInformation();
+                activeLotsList.setModel(sessionManager.getActiveLots());
             }
         });
 
@@ -252,18 +254,10 @@ public class AuctionGUI {
                 if (sessionManager.buyOutItem(featuredList.getSelectedValue())){
                     JOptionPane.showMessageDialog(UserPanel, "Purchase Successful");
                     resetFeaturedWindow();
-//                    refreshInformation();
+                    activeLotsList.setModel(sessionManager.getActiveLots());
                 }else{
                     JOptionPane.showMessageDialog(UserPanel, "Error");
                 }
-            }
-        });
-
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetFeaturedWindow();
-                refreshInformation();
             }
         });
 
@@ -272,15 +266,20 @@ public class AuctionGUI {
             public void actionPerformed(ActionEvent e) {
                 sessionManager.removeItem(featuredList.getSelectedValue());
                 resetFeaturedWindow();
-                refreshInformation();
             }
         });
         acceptBidButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                if (sessionManager.buyOutItem(featuredList.getSelectedValue())){
+                    JOptionPane.showMessageDialog(UserPanel, "Purchase Successful");
+                    resetFeaturedWindow();
+                }else{
+                    JOptionPane.showMessageDialog(UserPanel, "Error");
+                }
             }
         });
+
         viewBidsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -305,6 +304,12 @@ public class AuctionGUI {
         });
 
 
+        activeLotsList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+
+            }
+        });
     }
 
     /**
@@ -313,12 +318,6 @@ public class AuctionGUI {
      * @return String Error message if error occurs
      *
      */
-
-    public void refreshInformation(){
-        featuredList.setModel(sessionManager.getAllLots());
-        activeLotsList.setModel(sessionManager.getActiveLots());
-    }
-
     private String checkRegistrationForm(){
         if(firstNameTxtField.getText().isEmpty()){
             return "First Name is blank";

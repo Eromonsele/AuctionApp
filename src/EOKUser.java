@@ -13,6 +13,7 @@ public class EOKUser implements Entry {
     public Boolean loggedIn;
     public ArrayList<EO2Lot> lots;
     public ArrayList<Bid> bids;
+    public ArrayList<Message> messages;
 
     public EOKUser() {
 

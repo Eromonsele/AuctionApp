@@ -1,21 +1,23 @@
 import net.jini.core.entry.Entry;
 import net.jini.core.entry.UnusableEntryException;
+import net.jini.core.event.RemoteEvent;
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.event.UnknownEventException;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
+import net.jini.space.AvailabilityEvent;
 import net.jini.space.JavaSpace05;
 import net.jini.space.MatchSet;
 
 import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.security.spec.KeySpec;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class SessionManager {
@@ -73,6 +75,7 @@ public class SessionManager {
 						EOKUserReg.loggedIn = false;
 						EOKUserReg.bids = new ArrayList<Bid>();
 						EOKUserReg.lots = new ArrayList<EO2Lot>();
+						EOKUserReg.messages = new ArrayList<Message>();
 
 						space.write(EOKUserReg,null, Lease.FOREVER);
 						return true;
@@ -260,32 +263,6 @@ public class SessionManager {
 	};
 
 	/**
-	 * getAllLots:
-	 * @return lotsCollection
-	 */
-	public DefaultListModel<EO2Lot> getAllLots(){
-		DefaultListModel<EO2Lot> lotsCollection = new DefaultListModel<EO2Lot>();
-
-		Collection<EO2Lot> templates = new ArrayList<EO2Lot>();
-		EO2Lot template = new EO2Lot();
-		templates.add(template);
-			try {
-
-				MatchSet results = space.contents(templates, null, FIVE_SECONDS, NUMBER_OF_OBJECTS_TO_RETURN);
-				EO2Lot result = (EO2Lot)results.next();
-				while (result != null){
-					lotsCollection.addElement(result);
-					result = (EO2Lot) results.next();
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		return lotsCollection;
-	}
-
-	/**
 	 * removeItem:
 	 * @param lotItem
 	 * @return
@@ -367,17 +344,10 @@ public class SessionManager {
 		return amount > 0;
 	}
 
-	public void preLoad(){
-		Map<String,String> preInfo = new HashMap<String, String>();
-		preInfo.put("firstName","admin");
-		preInfo.put("secondName","admin");
-		preInfo.put("userName","admin");
-		preInfo.put("email","admin@admin.com");
-		preInfo.put("password","root");
-
-		registerUser(preInfo);
-	}
-
+	/**
+	 *
+	 * @return
+	 */
 	public DefaultListModel<EO2Lot> getActiveLots(){
 		DefaultListModel<EO2Lot> temp = new DefaultListModel<EO2Lot>();
 		EOKUser template = new EOKUser(sessionUser.userId);
@@ -418,10 +388,4 @@ public class SessionManager {
 		return false;
 	}
 
-
-//	public String hashingPassword(){
-//		byte[] salt = new byte[16];
-//		random.nextBytes(salt);
-//		KeySpec spec = new PBEKeySpec()
-//	}
 }
