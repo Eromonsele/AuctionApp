@@ -90,12 +90,19 @@ public class AuctionGUI {
 
                 // Refresh Item on Add everytime
                 new AddItemRefresh(featuredList);
+                new BidNotification();
 
                 activeLotsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
                 activeLotsList.setLayoutOrientation(JList.VERTICAL);
                 activeLotsList.setVisibleRowCount(-1);
                 activeLotsList.setModel(sessionManager.getActiveLots());
 
+                notificationTxtArea.append("notes for the man");
+                if (sessionManager.getNotifications().size() > 0){
+                    for (Message msg: sessionManager.getNotifications()) {
+                        notificationTxtArea.append(msg.toString());
+                    }
+                }
 //               new BidNotification(notificationTxtArea);
 
             }
@@ -266,6 +273,7 @@ public class AuctionGUI {
             public void actionPerformed(ActionEvent e) {
                 sessionManager.removeItem(featuredList.getSelectedValue());
                 resetFeaturedWindow();
+                activeLotsList.setModel(sessionManager.getActiveLots());
             }
         });
         acceptBidButton.addActionListener(new ActionListener() {

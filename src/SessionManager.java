@@ -34,7 +34,7 @@ public class SessionManager {
 	public String errorMessage;
 	public EOKUser sessionUser;
 
-	public SessionManager() {
+	public SessionManager(){
 		// set up the security manager
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new SecurityManager());
@@ -52,13 +52,15 @@ public class SessionManager {
 			System.err.println("Failed to find the transaction manager");
 			System.exit(1);
 		}
+
 	}
 
 	/**
-	 * registerUser:
+	 *  Registers a user based on the inputs from various fields and returns a true or false,
+	 *  if registration is successful or not successful respectively
 	 *
-	 * @param userInfo
-	 * @return
+	 * @param userInfo an map collection of user information.
+	 * @return true if registration is successful and has been written into the javaspace,false otherwise
 	 */
 	public boolean registerUser(Map<String,String> userInfo){
 		if (!userInfo.isEmpty()){
@@ -94,10 +96,12 @@ public class SessionManager {
 	}
 
 	/**
-	 * LoginUser: Logs in user
-	 * @param userName
-	 * @param password
-	 * @return
+	 * Creates a session for registered user and returns a true or false value,
+	 * if login is successful or otherwise
+	 *
+	 * @param userName a string of the user's identification
+	 * @param password a string if the user's password
+	 * @return true if Login is successful and has been written into the javaspace, false otherwise
 	 */
 	public boolean loginUser( String userName, String password){
 
@@ -120,10 +124,10 @@ public class SessionManager {
 	}
 
 	/**
-	 * addItem:
+	 * Creates and inserts an item into the javaspace, this item will be owned by the session user.
 	 *
-	 * @param lotInfo
-	 * @return
+	 * @param lotInfo a map collection of the lot info
+	 * @return true if add item is successful and has been written into the javaspace, false otherwise
 	 */
 	public boolean addItem(Map<String,String> lotInfo){
 
@@ -269,13 +273,23 @@ public class SessionManager {
 	 */
 	public boolean removeItem(EO2Lot lotItem){
 		try {
-			EO2Lot lot = (EO2Lot) space.takeIfExists(lotItem,null,ONE_SECOND);
-			if (lot != null){
-				for (Object result : lot.bids) {
-					Bid bid = (Bid) space.take((Entry) result,null,TWO_SECONDS);
-				}
-				return true;
+			EOKUser userTemplate = new EOKUser(sessionUser.userId);
+			EOKUser user = (EOKUser) space.take(userTemplate,null,TWO_MINUTES);
+
+			if (user != null){
+				user.lots.remove(lotItem);
 			}
+
+			space.write(user,null,Lease.FOREVER);
+//
+//			EO2Lot template = new EO2Lot(lotItem.lotOwner, lotItem.lotName);
+//			EO2Lot lot = (EO2Lot) space.take(template,null,TWO_MINUTES);
+//			if (lot != null){
+//				for (Bid result : lot.bids) {
+//					Bid bid = (Bid) space.take(result,null,TWO_MINUTES);
+//				}
+				return true;
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -304,6 +318,29 @@ public class SessionManager {
 	}
 
 	/**
+	 * getNotifications:
+	 * @return
+	 */
+	public ArrayList<Message> getNotifications(){
+		ArrayList<Message> messages = new ArrayList<>();
+
+		EOKUser template = new EOKUser(sessionUser.userId);
+		try {
+			EOKUser user = (EOKUser) space.read(template, null,TWO_MINUTES);
+
+			if (user != null){
+				if (user.lots.size() > 0){
+					messages = user.messages;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return messages;
+	};
+
+	/**
 	 * isNumeric : Check if inputs are numbers
 	 * @param str
 	 * @return
@@ -323,8 +360,7 @@ public class SessionManager {
 	 * @param  email an email address
 	 * @return Boolean
 	 */
-	public boolean isValid(String email)
-	{
+	public boolean isValid(String email){
 		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
 				"[a-zA-Z0-9_+&*-]+)*@" +
 				"(?:[a-zA-Z0-9-]+\\.)+[a-z" +
@@ -336,16 +372,17 @@ public class SessionManager {
 		return pat.matcher(email).matches();
 	}
 
-	public JavaSpace05 getSpace() {
-		return space;
-	}
-
+	/**
+	 * amountChecker:
+	 * @param amount
+	 * @return
+	 */
 	public boolean amountChecker(Double amount){
 		return amount > 0;
 	}
 
 	/**
-	 *
+	 * getActiveLots:
 	 * @return
 	 */
 	public DefaultListModel<EO2Lot> getActiveLots(){
@@ -366,9 +403,8 @@ public class SessionManager {
 		return temp;
 	}
 
-
 	/**
-	 *	logOut
+	 * logOut:
 	 * @return Boolean
 	 */
 	public boolean logOut(){

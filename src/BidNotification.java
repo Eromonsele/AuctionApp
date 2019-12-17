@@ -24,8 +24,8 @@ public class BidNotification implements RemoteEventListener {
 	private final static int FIVE_SECONDS = 1000 * 5; // that's 5000 Milliseconds
 	private final static int NUMBER_OF_OBJECTS_TO_RETURN = 100;
 
-	public BidNotification(JTextArea nArea) {
-		notifyArea = nArea;
+	public BidNotification() {
+
 
 		space = (JavaSpace05) SpaceUtils.getSpace();
 		if (space == null){
@@ -63,16 +63,8 @@ public class BidNotification implements RemoteEventListener {
 
 	@Override
 	public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
-		System.out.println("kinda works");
-//		AvailabilityEvent event = (AvailabilityEvent) remoteEvent;
-//
-//		try {
-//			Bid bid = (Bid) event.getEntry();
-//
-//			System.out.println(new Date().toString() + ": "+ bid +"new bid added on " + bid.EO2LotItem);
-//		} catch (UnusableEntryException e) {
-//			e.printStackTrace();
-//		}
+		System.out.println("kinda works" );
+
 
 
 	}
