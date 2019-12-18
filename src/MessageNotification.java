@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.Date;
 
-public class BidNotification implements RemoteEventListener {
+public class MessageNotification implements RemoteEventListener {
 	private JavaSpace05 space;
 	private RemoteEventListener theStub;
 	private JTextArea notifyArea;
@@ -24,8 +24,9 @@ public class BidNotification implements RemoteEventListener {
 	private final static int FIVE_SECONDS = 1000 * 5; // that's 5000 Milliseconds
 	private final static int NUMBER_OF_OBJECTS_TO_RETURN = 100;
 
-	public BidNotification() {
+	public MessageNotification(JTextArea nArea) {
 
+		notifyArea = nArea;
 
 		space = (JavaSpace05) SpaceUtils.getSpace();
 		if (space == null){
@@ -44,7 +45,7 @@ public class BidNotification implements RemoteEventListener {
 			theStub = (RemoteEventListener) myDefaultExporter.export(this);
 
 			// add the listener
-			Bid template = new Bid();
+			Message template = new Message();
 			space.notify(template, null, this.theStub, Lease.FOREVER, null);
 
 		} catch (Exception e) {
@@ -53,7 +54,7 @@ public class BidNotification implements RemoteEventListener {
 
 		// create an example object being listened for
 		try{
-			Bid msg = new Bid();
+			Message msg = new Message();
 			space.write(msg, null, Lease.FOREVER);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,9 +64,9 @@ public class BidNotification implements RemoteEventListener {
 
 	@Override
 	public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
-		System.out.println("kinda works" );
+		notifyArea.setText("");
 
-
+		System.out.println("dlhdlgshs");
 
 	}
 }

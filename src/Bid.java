@@ -15,9 +15,10 @@ public class Bid implements Entry {
         bidValue = bValue;
         bidder = owner;
     }
-    //add bid Date
+
     @Override
     public String toString() {
-        return "Bidder: " + bidder + "\nBid Value: £" + bidValue.toString() + "\n\n";
+//        return "Bidder: " + bidder + "\nBid Value: £" + bidValue.toString() + "\n\n";
+        return null;
     }
 }

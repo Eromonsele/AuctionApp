@@ -34,6 +34,7 @@ public class SessionManager {
 	public String errorMessage;
 	public EOKUser sessionUser;
 
+
 	public SessionManager(){
 		// set up the security manager
 		if (System.getSecurityManager() == null)
@@ -52,6 +53,8 @@ public class SessionManager {
 			System.err.println("Failed to find the transaction manager");
 			System.exit(1);
 		}
+
+		//bidNotification();
 
 	}
 
@@ -422,6 +425,81 @@ public class SessionManager {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+
+	public void bidNotification(JTextArea notifyArea){
+		List<Bid> templates = new ArrayList<>();
+
+		Bid template = new Bid();
+		templates.add(template);
+
+		final Object lock = new Object();
+
+		RemoteEventListener listener = new RemoteEventListener() {
+			@Override
+			public void notify(RemoteEvent remoteEvent) {
+				// Cast the RemoteEvent to an AvailabilityEvent, as this adds extra functionality
+				AvailabilityEvent event = (AvailabilityEvent) remoteEvent;
+
+				try {
+					Bid bid = (Bid) event.getEntry();
+					if (bid.bidder != null){
+						EOKUser userTemplate = new EOKUser(bid.bidder.userId);
+						try {
+							EOKUser user = (EOKUser) space.take(userTemplate,null,TWO_MINUTES);
+							if(user != null){
+								Message message = new Message();
+								message.owner = sessionUser.userId;
+								message.otherUser = user.userId;
+								message.itemName = bid.EO2LotItem.toString();
+								message.messageType = "bidByOther";
+								user.messages.add(message);
+
+								space.write(message,null,Lease.FOREVER);
+								space.write(user,null,Lease.FOREVER);
+
+								notifyArea.setText("");
+								if (getNotifications().size() > 0){
+									for (Message msg: getNotifications()) {
+										notifyArea.append(msg.toString());
+									}
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+
+					}
+//					if (bid)
+					System.out.println("kcrazy " + bid);
+				} catch (UnusableEntryException e) {
+					e.printStackTrace();
+				} finally {
+					// Remember - sequential execution is required to make this test work
+					// Comment this out to try it without the locking
+					synchronized(lock) {
+						lock.notify();
+					}
+				}
+			}
+		};
+
+		try {
+			// export the listener object, so its "notify" method can be called remotely from the space
+			UnicastRemoteObject.exportObject(listener, 0);
+
+			// add the "registerForAvailabilityEvent, much like adding a "notify" to the space
+			space.registerForAvailabilityEvent(templates, null, false, listener, Lease.FOREVER, null);
+
+			Bid bid = new Bid();
+			space.write(bid,null,FIVE_SECONDS);
+			System.out.println("drake");
+
+		} catch (RemoteException | TransactionException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

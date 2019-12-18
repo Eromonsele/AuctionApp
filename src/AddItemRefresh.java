@@ -63,7 +63,6 @@ public class AddItemRefresh implements RemoteEventListener {
 
 	@Override
 	public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
-		System.out.println("dgsg");
 		DefaultListModel<EO2Lot> lotsCollection = new DefaultListModel<EO2Lot>();
 
 		Collection<EO2Lot> templates = new ArrayList<EO2Lot>();
