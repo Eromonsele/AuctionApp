@@ -20,7 +20,7 @@ public class MessageNotification implements RemoteEventListener {
 	private RemoteEventListener theStub;
 	private JTextArea notifyArea;
 
-
+	private static final long TWO_MINUTES = 1000 * 60;
 	private final static int FIVE_SECONDS = 1000 * 5; // that's 5000 Milliseconds
 	private final static int NUMBER_OF_OBJECTS_TO_RETURN = 100;
 
@@ -46,7 +46,7 @@ public class MessageNotification implements RemoteEventListener {
 
 			// add the listener
 			Message template = new Message();
-			space.notify(template, null, this.theStub, Lease.FOREVER, null);
+			space.notify(template, null, this.theStub, TWO_MINUTES, null);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,9 +64,9 @@ public class MessageNotification implements RemoteEventListener {
 
 	@Override
 	public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
-		notifyArea.setText("");
-
-		System.out.println("dlhdlgshs");
+//		notifyArea.setText("");
+//
+		System.out.println("Message Notification trigger");
 
 	}
 }

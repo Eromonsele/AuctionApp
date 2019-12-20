@@ -1,8 +1,7 @@
-import net.jini.core.entry.Entry;
+
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
-import net.jini.core.event.UnknownEventException;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
@@ -10,13 +9,10 @@ import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.space.AvailabilityEvent;
 import net.jini.space.JavaSpace05;
-import net.jini.space.MatchSet;
 
-import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.security.spec.KeySpec;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -32,7 +28,7 @@ public class SessionManager {
 	private TransactionManager mgr;
 
 	public String errorMessage;
-	public EOKUser sessionUser;
+	public EOKHUser sessionUser;
 
 
 	public SessionManager(){
@@ -68,21 +64,21 @@ public class SessionManager {
 	public boolean registerUser(Map<String,String> userInfo){
 		if (!userInfo.isEmpty()){
 			try {
-				EOKUser EOKUserTemplate = new EOKUser(userInfo.get("userName"));
-				EOKUser EOKUserRegister = (EOKUser)space.readIfExists(EOKUserTemplate,null,TWO_MINUTES);
+				EOKHUser EOKHUserTemplate = new EOKHUser(userInfo.get("userName"));
+				EOKHUser EOKHUserRegister = (EOKHUser)space.readIfExists(EOKHUserTemplate,null,TWO_MINUTES);
 
-				if (EOKUserRegister == null){
+				if (EOKHUserRegister == null){
 					try{
-						EOKUser EOKUserReg = new EOKUser(userInfo.get("userName"),userInfo.get("password"));
-						EOKUserReg.firstName = userInfo.get("firstName");
-						EOKUserReg.secondName = userInfo.get("secondName");
-						EOKUserReg.emailAddress = userInfo.get("email");
-						EOKUserReg.loggedIn = false;
-						EOKUserReg.bids = new ArrayList<Bid>();
-						EOKUserReg.lots = new ArrayList<EO2Lot>();
-						EOKUserReg.messages = new ArrayList<Message>();
+						EOKHUser EOKHUserReg = new EOKHUser(userInfo.get("userName"),userInfo.get("password"));
+						EOKHUserReg.firstName = userInfo.get("firstName");
+						EOKHUserReg.secondName = userInfo.get("secondName");
+						EOKHUserReg.emailAddress = userInfo.get("email");
+						EOKHUserReg.loggedIn = false;
+						EOKHUserReg.EOKHBids = new ArrayList<EOKHBid>();
+						EOKHUserReg.lots = new ArrayList<EOKHLot>();
+						EOKHUserReg.messages = new ArrayList<Message>();
 
-						space.write(EOKUserReg,null, Lease.FOREVER);
+						space.write(EOKHUserReg,null, Lease.FOREVER);
 						return true;
 					}
 					catch (Exception e){
@@ -110,12 +106,12 @@ public class SessionManager {
 
 		try {
 			if(!userName.isEmpty() && !password.isEmpty() ) {
-				EOKUser EOKUserTemplate = new EOKUser(userName, password);
-				EOKUser EOKUserLogin = (EOKUser) space.readIfExists(EOKUserTemplate, null, TWO_SECONDS);
+				EOKHUser EOKHUserTemplate = new EOKHUser(userName, password);
+				EOKHUser EOKHUserLogin = (EOKHUser) space.readIfExists(EOKHUserTemplate, null, TWO_SECONDS);
 
-				if (EOKUserLogin != null) {
-					EOKUserLogin.loggedIn = true;
-					sessionUser = EOKUserLogin;
+				if (EOKHUserLogin != null) {
+					EOKHUserLogin.loggedIn = true;
+					sessionUser = EOKHUserLogin;
 					return true;
 				}else{
 					errorMessage = "User doesn't exist, Please register ";
@@ -162,24 +158,25 @@ public class SessionManager {
 			Transaction txn = trc.transaction;
 
 			try{
-				EOKUser template = new EOKUser(sessionUser.userId);
-				EOKUser user = (EOKUser) space.take(template,txn,TWO_MINUTES);
+				EOKHUser template = new EOKHUser(sessionUser.userId);
+				EOKHUser user = (EOKHUser) space.take(template,txn,TWO_MINUTES);
 
-								//add Item
-				EO2Lot EO2LotItem = new EO2Lot(sessionUser, lotInfo.get("lotName"));
-				EO2LotItem.lotDescription = lotInfo.get("lotDescription");
-				EO2LotItem.lotBuyOutPrice = lotBuyOutPrice;
-				EO2LotItem.lotStartPrice = lotStartPrice;
-				EO2LotItem.sold = false;
-				EO2LotItem.bids = new ArrayList<Bid>();
+				//add Item
+				EOKHLot EOKHLotItem = new EOKHLot(sessionUser, lotInfo.get("lotName"));
+				EOKHLotItem.lotDescription = lotInfo.get("lotDescription");
+				EOKHLotItem.lotBuyOutPrice = lotBuyOutPrice;
+				EOKHLotItem.lotStartPrice = lotStartPrice;
+				EOKHLotItem.sold = false;
+				EOKHLotItem.lotId = generateRandomID();
+				EOKHLotItem.EOKHBids = new ArrayList<EOKHBid>();
 
 				if (user != null){
-					user.lots.add(EO2LotItem);
+					user.lots.add(EOKHLotItem);
 				}
 				//write user into space
 				space.write(user,txn,Lease.FOREVER);
 				//write the item to space
-				space.write(EO2LotItem,txn, Lease.FOREVER);
+				space.write(EOKHLotItem,txn, Lease.FOREVER);
 
 			}catch (Exception e){
 				System.out.println("Failed to read or write to space " + e);
@@ -204,7 +201,7 @@ public class SessionManager {
 	 * @param highestBid
 	 * @return
 	 */
-	public boolean setBid(Double bidPrice, EO2Lot lotItem, Double highestBid){
+	public boolean setBid(Double bidPrice, EOKHLot lotItem, Double highestBid){
 
 		// get the lot item, and get the latest bid
 		try{
@@ -219,27 +216,39 @@ public class SessionManager {
 			Transaction addBids = setTrc.transaction;
 
 			try{
-				EOKUser usertemplate = new EOKUser(sessionUser.userId);
-				EOKUser user = (EOKUser) space.take(usertemplate,addBids,TWO_MINUTES);
+				EOKHUser usertemplate = new EOKHUser(sessionUser.userId);
+				EOKHUser user = (EOKHUser) space.take(usertemplate,addBids,TWO_MINUTES);
 
-				EO2Lot template = new EO2Lot(lotItem.lotOwner,lotItem.lotName);
-				EO2Lot lot = (EO2Lot) space.takeIfExists(template,addBids,TWO_MINUTES);
+				EOKHLot template = new EOKHLot(lotItem.lotOwner,lotItem.lotName);
+				EOKHLot lot = (EOKHLot) space.takeIfExists(template,addBids,TWO_MINUTES);
 
 				if (lot != null && user != null){
 					int returnValue = Double.compare(highestBid,bidPrice);
 					if (returnValue < 0){
-						Bid bid = new Bid(lot,bidPrice,sessionUser);
-						lot.bids.add(bid);
-						user.bids.add(bid);
-						space.write(bid,addBids,Lease.FOREVER);
+						EOKHBid EOKHBid = new EOKHBid(lot,bidPrice,sessionUser);
+						lot.EOKHBids.add(EOKHBid);
+						user.EOKHBids.add(EOKHBid);
+
+
+						Message message = new Message();
+						message.owner = user.userId;
+						message.otherUser = user.userId;
+						message.itemName =lot.toString();
+						message.messageType = "bidByOther";
+
+						user.messages.add(message);
+
+						space.write(message,addBids,Lease.FOREVER);
+						space.write(EOKHBid,addBids,Lease.FOREVER);
 						space.write(lot,addBids,Lease.FOREVER);
 						space.write(user,addBids,Lease.FOREVER);
+
 					}else if (returnValue > 0){
-						errorMessage = "Error!! Bid price is less than highest bid " + lot.bids.get(lot.bids.size() - 1).bidValue;
-						throw new Exception();
+						errorMessage = "Error!! Bid price is less than highest bid " + lot.EOKHBids.get(lot.EOKHBids.size() - 1).bidValue;
+						throw new Exception("Error");
 					}else{
-						errorMessage = "Error!! Bid price is equal to the highest bid " + lot.bids.get(lot.bids.size() - 1).bidValue;
-						throw new Exception();
+						errorMessage = "Error!! Bid price is equal to the highest bid " + lot.EOKHBids.get(lot.EOKHBids.size() - 1).bidValue;
+						throw new Exception("Error");
 					}
 				}
 			}catch (Exception e){
@@ -263,9 +272,9 @@ public class SessionManager {
 	 * @param lotItem
 	 * @return
 	 */
-	public String getHighestBid(EO2Lot lotItem){
-		if (lotItem.bids.size() > 0){
-			return "£"+ lotItem.bids.get(lotItem.bids.size() - 1).bidValue;
+	public String getHighestBid(EOKHLot lotItem){
+		if (lotItem.EOKHBids.size() > 0){
+			return "£"+ lotItem.EOKHBids.get(lotItem.EOKHBids.size() - 1).bidValue;
 		}
 		return "£0.0";
 	};
@@ -275,29 +284,31 @@ public class SessionManager {
 	 * @param lotItem
 	 * @return
 	 */
-	public boolean removeItem(EO2Lot lotItem){
+	public boolean removeItem(EOKHLot lotItem){
 		try {
-			EOKUser userTemplate = new EOKUser(sessionUser.userId);
-			EOKUser user = (EOKUser) space.take(userTemplate,null,TWO_MINUTES);
+			EOKHUser userTemplate = new EOKHUser(sessionUser.userId);
+			EOKHUser user = (EOKHUser) space.take(userTemplate,null,TWO_MINUTES);
 
-			if (user != null){
-				user.lots.remove(lotItem);
+			EOKHLot lotTemplate = new EOKHLot(lotItem.lotOwner, lotItem.lotName);
+			EOKHLot lot = (EOKHLot) space.take(lotTemplate,null, TWO_MINUTES);
+
+			if (user != null && lot != null){
+				for (int i = 0; i <  user.lots.size(); i++) {
+					if (user.lots.get(i).equals(lot) ){
+						user.lots.remove(i);
+					}
+				}
+
+				for (int j = 0; j < lot.EOKHBids.size(); j++) {
+					lot.EOKHBids.remove(j);
+				}
+
+				space.write(user,null,Lease.FOREVER);
 			}
-
-			space.write(user,null,Lease.FOREVER);
-//
-//			EO2Lot template = new EO2Lot(lotItem.lotOwner, lotItem.lotName);
-//			EO2Lot lot = (EO2Lot) space.take(template,null,TWO_MINUTES);
-//			if (lot != null){
-//				for (Bid result : lot.bids) {
-//					Bid bid = (Bid) space.take(result,null,TWO_MINUTES);
-//				}
-				return true;
-//			}
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return false;
 	}
 
@@ -306,10 +317,10 @@ public class SessionManager {
 	 * @param lotItem
 	 * @return
 	 */
-	public boolean buyOutItem(EO2Lot lotItem){
+	public boolean buyOutItem(EOKHLot lotItem){
 		try {
-			EO2Lot template = new EO2Lot(lotItem.lotOwner, lotItem.lotName);
-			EO2Lot lot = (EO2Lot) space.takeIfExists(template,null,ONE_SECOND);
+			EOKHLot template = new EOKHLot(lotItem.lotOwner, lotItem.lotName);
+			EOKHLot lot = (EOKHLot) space.takeIfExists(template,null,ONE_SECOND);
 			if (lot != null){
 				lot.sold = true;
 				space.write(lot,null,Lease.FOREVER);
@@ -328,9 +339,9 @@ public class SessionManager {
 	public ArrayList<Message> getNotifications(){
 		ArrayList<Message> messages = new ArrayList<>();
 
-		EOKUser template = new EOKUser(sessionUser.userId);
+		EOKHUser template = new EOKHUser(sessionUser.userId);
 		try {
-			EOKUser user = (EOKUser) space.read(template, null,TWO_MINUTES);
+			EOKHUser user = (EOKHUser) space.read(template, null,TWO_MINUTES);
 
 			if (user != null){
 				if (user.lots.size() > 0){
@@ -389,11 +400,11 @@ public class SessionManager {
 	 * getActiveLots:
 	 * @return
 	 */
-	public DefaultListModel<EO2Lot> getActiveLots(){
-		DefaultListModel<EO2Lot> temp = new DefaultListModel<EO2Lot>();
-		EOKUser template = new EOKUser(sessionUser.userId);
+	public DefaultListModel<EOKHLot> getActiveLots(){
+		DefaultListModel<EOKHLot> temp = new DefaultListModel<EOKHLot>();
+		EOKHUser template = new EOKHUser(sessionUser.userId);
 		try {
-			EOKUser user = (EOKUser) space.take(template, null, TWO_MINUTES);
+			EOKHUser user = (EOKHUser) space.take(template, null, TWO_MINUTES);
 
 			if (user != null){
 				for (int i = 0; i < user.lots.size(); i++) {
@@ -412,9 +423,9 @@ public class SessionManager {
 	 * @return Boolean
 	 */
 	public boolean logOut(){
-		EOKUser template = new EOKUser(sessionUser.userId);
+		EOKHUser template = new EOKHUser(sessionUser.userId);
 		try {
-			EOKUser user = (EOKUser) space.take(template,null,TWO_MINUTES);
+			EOKHUser user = (EOKHUser) space.take(template,null,TWO_MINUTES);
 
 			if (user != null){
 				user.loggedIn = false;
@@ -429,60 +440,47 @@ public class SessionManager {
 	}
 
 
-	public void bidNotification(JTextArea notifyArea){
-		List<Bid> templates = new ArrayList<>();
+	public void bidNotification(AuctionGUI auctionGUI){
+		List<EOKHBid> templates = new ArrayList<>();
 
-		Bid template = new Bid();
+		EOKHBid template = new EOKHBid();
 		templates.add(template);
-
-		final Object lock = new Object();
 
 		RemoteEventListener listener = new RemoteEventListener() {
 			@Override
 			public void notify(RemoteEvent remoteEvent) {
+				System.out.println("Bid Notify Triggered");
 				// Cast the RemoteEvent to an AvailabilityEvent, as this adds extra functionality
 				AvailabilityEvent event = (AvailabilityEvent) remoteEvent;
 
 				try {
-					Bid bid = (Bid) event.getEntry();
-					if (bid.bidder != null){
-						EOKUser userTemplate = new EOKUser(bid.bidder.userId);
+					EOKHBid EOKHBid = (EOKHBid) event.getEntry();
+					if (EOKHBid.bidder != null){
+						EOKHUser userTemplate = new EOKHUser(EOKHBid.bidder.userId);
 						try {
-							EOKUser user = (EOKUser) space.take(userTemplate,null,TWO_MINUTES);
+							EOKHUser user = (EOKHUser) space.take(userTemplate,null,TWO_MINUTES);
 							if(user != null){
+								System.out.println("Message working Triggered");
 								Message message = new Message();
 								message.owner = sessionUser.userId;
 								message.otherUser = user.userId;
-								message.itemName = bid.EO2LotItem.toString();
+								message.itemName = EOKHBid.EOKHLotItem.toString();
 								message.messageType = "bidByOther";
 								user.messages.add(message);
 
 								space.write(message,null,Lease.FOREVER);
 								space.write(user,null,Lease.FOREVER);
 
-								notifyArea.setText("");
-								if (getNotifications().size() > 0){
-									for (Message msg: getNotifications()) {
-										notifyArea.append(msg.toString());
-									}
-								}
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-
-
 					}
 //					if (bid)
-					System.out.println("kcrazy " + bid);
+					System.out.println("kcrazy " + EOKHBid);
+					auctionGUI.updateNotifications();
 				} catch (UnusableEntryException e) {
 					e.printStackTrace();
-				} finally {
-					// Remember - sequential execution is required to make this test work
-					// Comment this out to try it without the locking
-					synchronized(lock) {
-						lock.notify();
-					}
 				}
 			}
 		};
@@ -494,13 +492,28 @@ public class SessionManager {
 			// add the "registerForAvailabilityEvent, much like adding a "notify" to the space
 			space.registerForAvailabilityEvent(templates, null, false, listener, Lease.FOREVER, null);
 
-			Bid bid = new Bid();
-			space.write(bid,null,FIVE_SECONDS);
-			System.out.println("drake");
+			EOKHBid EOKHBid = new EOKHBid();
+			space.write(EOKHBid,null,FIVE_SECONDS);
 
 		} catch (RemoteException | TransactionException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public String generateRandomID(){
+		String saltChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		StringBuilder id = new StringBuilder();
+		Random rnd = new Random();
+		while (id.length() < 18) { // length of the random string.
+			int index = (int) (rnd.nextFloat() * saltChars.length());
+			id.append(saltChars.charAt(index));
+		}
+		String saltStr = id.toString();
+		return saltStr;
 	}
 
 }

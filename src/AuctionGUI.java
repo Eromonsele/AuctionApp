@@ -26,7 +26,7 @@ public class AuctionGUI {
     private JLabel welcomeMessage;
     private JTabbedPane tabbedPane1;
     private JButton logOutButton;
-    private JList <EO2Lot> featuredList;
+    private JList <EOKHLot> featuredList;
     private JButton addItemsButton;
     private JScrollPane featuredListscrollPane;
     private JPanel itemInfoPanel;
@@ -53,6 +53,7 @@ public class AuctionGUI {
     private JList activeLotsList;
     private JPanel activeLotsWrapper;
     private JPanel notifyTab;
+    private JPanel userFeaturedListPanel;
     private JButton addItemBtn;
     private JPanel lotListPanel;
     private SessionManager sessionManager;
@@ -65,6 +66,8 @@ public class AuctionGUI {
         LoginPanel.setVisible(true);
         RegisterPanel.setVisible(false);
         UserPanel.setVisible(false);
+
+
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -93,14 +96,16 @@ public class AuctionGUI {
                 featuredList.setVisibleRowCount(-1);
 
                 // Refresh Item on Add everytime
-                new AddItemRefresh(featuredList);
+                new AddItemRefresh(AuctionGUI.this);
                 new MessageNotification(notificationTxtArea);
-                sessionManager.bidNotification(notificationTxtArea);
+                sessionManager.bidNotification(AuctionGUI.this);
 
                 activeLotsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
                 activeLotsList.setLayoutOrientation(JList.VERTICAL);
                 activeLotsList.setVisibleRowCount(-1);
                 activeLotsList.setModel(sessionManager.getActiveLots());
+
+                notificationTxtArea.append("fred");
 
 //               new MessageNotification(notificationTxtArea);
 
@@ -156,6 +161,7 @@ public class AuctionGUI {
                     JOptionPane.showMessageDialog(RegisterPanel, sessionManager.errorMessage);
                     return;
                 }else{
+                    JOptionPane.showMessageDialog(RegisterPanel,"Registration Successful, Please login");
                     LoginPanel.setVisible(true);
                     RegisterPanel.setVisible(false);
                     UserPanel.setVisible(false);
@@ -202,7 +208,7 @@ public class AuctionGUI {
                         removeBtn.setVisible(false);
                         acceptBidButton.setVisible(false);
                     }
-                    if (featuredList.getSelectedValue().bids.size() > 0){
+                    if (featuredList.getSelectedValue().EOKHBids.size() > 0){
                         acceptBidButton.setEnabled(true);
                         viewBidsButton.setEnabled(true);
                     }else{
@@ -237,8 +243,8 @@ public class AuctionGUI {
                 String bidValue = JOptionPane.showInputDialog(UserPanel,"What is your bid?");
                 if(sessionManager.isNumeric(bidValue)){
                     Double highestBid =  featuredList.getSelectedValue().lotStartPrice;
-                    if (featuredList.getSelectedValue().bids.size() > 0){
-                        highestBid = featuredList.getSelectedValue().bids.get(featuredList.getSelectedValue().bids.size() - 1).bidValue;
+                    if (featuredList.getSelectedValue().EOKHBids.size() > 0){
+                        highestBid = featuredList.getSelectedValue().EOKHBids.get(featuredList.getSelectedValue().EOKHBids.size() - 1).bidValue;
                     }
 
                     if (sessionManager.setBid(Double.parseDouble(bidValue),featuredList.getSelectedValue(), highestBid)){
@@ -270,9 +276,15 @@ public class AuctionGUI {
         removeBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sessionManager.removeItem(featuredList.getSelectedValue());
-                resetFeaturedWindow();
-                activeLotsList.setModel(sessionManager.getActiveLots());
+                if (sessionManager.removeItem(featuredList.getSelectedValue())){
+                    JOptionPane.showMessageDialog(UserPanel,"Lot has been removed");
+                    resetFeaturedWindow();
+                    activeLotsList.setModel(sessionManager.getActiveLots());
+
+                }else{
+                    JOptionPane.showMessageDialog(UserPanel,"Lot Removal was unsucessful");
+                }
+
             }
         });
         acceptBidButton.addActionListener(new ActionListener() {
@@ -301,7 +313,7 @@ public class AuctionGUI {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (sessionManager.logOut()){
-                    JOptionPane.showMessageDialog(UserPanel, "Bye Bye" + sessionManager.sessionUser .toString());
+                    JOptionPane.showMessageDialog(UserPanel, "Bye Bye " + sessionManager.sessionUser .toString());
                     LoginPanel.setVisible(true);
                     RegisterPanel.setVisible(false);
                     UserPanel.setVisible(false);
@@ -390,6 +402,20 @@ public class AuctionGUI {
         descScrollPane.setVisible(false);
         itemActionsField.setVisible(false);
         descTextAreaField.setVisible(false);
+    }
+
+    public void updateNotifications(){
+        System.out.println("update call");
+        notificationTxtArea.setText("");
+        if (sessionManager.getNotifications().size() > 0){
+            for (Message msg: sessionManager.getNotifications()) {
+                notificationTxtArea.append(msg.toString());
+            }
+        }
+    }
+
+    public void updateScreen(DefaultListModel<EOKHLot>listModel){
+        featuredList.setModel(listModel);
     }
 
     public static void main(String[] args) {

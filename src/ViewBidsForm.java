@@ -8,7 +8,7 @@ public class ViewBidsForm extends JDialog {
 	private JButton buttonCancel;
 	private JTextArea bidsList;
 
-	public ViewBidsForm(EO2Lot list) {
+	public ViewBidsForm(EOKHLot list) {
 
 		setContentPane(contentPane);
 		setModal(true);
@@ -19,8 +19,8 @@ public class ViewBidsForm extends JDialog {
 
 		setSize(size);
 		bidsList.append(list.lotName + "\n" + "--------------------------------\n");
-		if (list.bids.size() > 0){
-			for (Object object : list.bids) {
+		if (list.EOKHBids.size() > 0){
+			for (Object object : list.EOKHBids) {
 				bidsList.append(object.toString());
 			}
 		}

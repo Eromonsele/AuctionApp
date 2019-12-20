@@ -18,13 +18,13 @@ public class AddItemRefresh implements RemoteEventListener {
 
 	private JavaSpace05 space;
 	private RemoteEventListener theStub;
-	private JList<EO2Lot> featuredList;
+	private AuctionGUI auctionGUI;
 
-
+	private static final long TWO_MINUTES = 1000 * 60;
 	private final static int FIVE_SECONDS = 1000 * 5; // that's 5000 Milliseconds
 	private final static int NUMBER_OF_OBJECTS_TO_RETURN = 100;
 
-	public AddItemRefresh(JList<EO2Lot> fList) {
+	public AddItemRefresh(AuctionGUI acAuctionGUI) {
 		// find the space
 		space = (JavaSpace05) SpaceUtils.getSpace();
 		if (space == null){
@@ -32,7 +32,7 @@ public class AddItemRefresh implements RemoteEventListener {
 			System.exit(1);
 		}
 
-		featuredList = fList;
+		auctionGUI = acAuctionGUI;
 
 		// create the exporter
 		Exporter myDefaultExporter =
@@ -45,8 +45,11 @@ public class AddItemRefresh implements RemoteEventListener {
 			theStub = (RemoteEventListener) myDefaultExporter.export(this);
 
 			// add the listener
-			EO2Lot template = new EO2Lot();
+			EOKHLot template = new EOKHLot();
 			space.notify(template, null, this.theStub, Lease.FOREVER, null);
+
+//			EOKHBid bidTemplate = new EOKHBid();
+//			space.notify(bidTemplate, null, this.theStub, Lease.FOREVER, null);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -54,8 +57,11 @@ public class AddItemRefresh implements RemoteEventListener {
 
 		// create an example object being listened for
 		try{
-			EO2Lot msg = new EO2Lot();
+			EOKHLot msg = new EOKHLot();
 			space.write(msg, null, Lease.FOREVER);
+//			EOKHBid bidMsg = new EOKHBid();
+//			space.write(bidMsg, null, Lease.FOREVER);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -63,27 +69,28 @@ public class AddItemRefresh implements RemoteEventListener {
 
 	@Override
 	public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
-		DefaultListModel<EO2Lot> lotsCollection = new DefaultListModel<EO2Lot>();
+		System.out.println("Refresh Triggered");
+		DefaultListModel<EOKHLot> lotsCollection = new DefaultListModel<EOKHLot>();
 
-		Collection<EO2Lot> templates = new ArrayList<EO2Lot>();
-		EO2Lot template = new EO2Lot();
+		Collection<EOKHLot> templates = new ArrayList<EOKHLot>();
+		EOKHLot template = new EOKHLot();
 		template.sold = false;
 		templates.add(template);
 		try {
 
 			MatchSet results = space.contents(templates, null, FIVE_SECONDS, NUMBER_OF_OBJECTS_TO_RETURN);
-			EO2Lot result = (EO2Lot)results.next();
+			EOKHLot result = (EOKHLot)results.next();
 			while (result != null){
 				if (result.sold == false){
 					lotsCollection.addElement(result);
 				}
-				result = (EO2Lot) results.next();
+				result = (EOKHLot) results.next();
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		auctionGUI.updateScreen(lotsCollection);
 
-		featuredList.setModel(lotsCollection);
 	}
 }
