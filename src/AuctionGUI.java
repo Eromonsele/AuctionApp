@@ -74,7 +74,11 @@ public class AuctionGUI {
 
                 Boolean result = sessionManager.loginUser(userTxtField.getText(),passTxtField.getText());
                 if (result == false){
-                  JOptionPane.showMessageDialog(LoginPanel,"Login not working");
+                    if (sessionManager.errorMessage == null){
+                        sessionManager.errorMessage = "User Login not working";
+                    }
+
+                  JOptionPane.showMessageDialog(LoginPanel, sessionManager.errorMessage);
                   return;
                  }
                 //open user GUI interface, with a welcome user on top
@@ -317,10 +321,8 @@ public class AuctionGUI {
     }
 
     /**
-     * checkRegistrationForm: Checks the form information before it is submitted to the space
-     *
+     * Checks the form information before it is submitted to the space
      * @return String Error message if error occurs
-     *
      */
     private String checkRegistrationForm(){
         if(firstNameTxtField.getText().isEmpty()){
@@ -377,7 +379,7 @@ public class AuctionGUI {
     }
 
     /**
-     * resetFeaturedWindow:
+     * Refreshes the feature panel after very list selection
      */
     private void resetFeaturedWindow(){
         adminButtonPanel.setVisible(false);

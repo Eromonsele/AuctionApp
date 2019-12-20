@@ -3,26 +3,33 @@ import net.jini.core.entry.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * The EOKUser objects represents the information of the physical user of the auction application
+ */
 public class EOKUser implements Entry {
 
-    public String firstName;
-    public String secondName;
-    public String password;
-    public String emailAddress;
-    public String userId;
-    public Boolean loggedIn;
-    public ArrayList<EO2Lot> lots;
-    public ArrayList<Bid> bids;
-    public ArrayList<Message> messages;
+    //Fields
+    public String firstName;  // The First Name of the user
+    public String secondName; // The Second Name of the User
+    public String password; // The password of the User's account
+    public String emailAddress; // The email address of the user
+    public String userId; // The User identification of the user
+    public Boolean loggedIn; // true if user is logged in false if user is logged out
+    public ArrayList<EO2Lot> lots; // a collection of lots posted by the user
+    public ArrayList<Bid> bids; // a collection of bids posted by the user
+    public ArrayList<Message> messages; // a collection of messages by the user
 
+    // Creates a new user
     public EOKUser() {
 
     }
 
+    //Creates a new user with the specified user id
     public EOKUser(String usrId){
         userId = usrId;
     }
 
+    // Creates a new user with the specified user id and password
     public EOKUser(String usrId, String pswd) {
         userId = usrId;
         password = pswd;

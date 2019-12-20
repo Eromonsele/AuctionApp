@@ -117,12 +117,13 @@ public class SessionManager {
 					EOKUserLogin.loggedIn = true;
 					sessionUser = EOKUserLogin;
 					return true;
+				}else{
+					errorMessage = "User doesn't exist, Please register ";
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return false;
 	}
 

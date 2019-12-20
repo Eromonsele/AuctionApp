@@ -2,12 +2,15 @@ import net.jini.core.entry.Entry;
 
 import java.util.Date;
 
-public class Message implements Entry {
-	public String messageType;
-	public String otherUser;
-	public String owner;
-	public String itemName;
 
+public class Message implements Entry {
+	//Fields
+	public String messageType; // The type of message
+	public String otherUser; // The sender of the message
+	public String owner; // The receiver of the message
+	public String itemName;// The Name of the Item
+
+	// Creates a new Message
 	public Message(){
 
 	}
